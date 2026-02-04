@@ -1,4 +1,4 @@
-import NavigationBar from "@/components/shared/navigation-bar"
+import NavigationBar from "@/src/components/shared/navigation-bar"
 
 function HomeLayout({ children }: { children: React.ReactNode }) {
   return (

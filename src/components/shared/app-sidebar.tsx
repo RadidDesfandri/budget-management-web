@@ -10,9 +10,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem
-} from "@/components/ui/sidebar"
-import { useRoutes } from "@/hooks/use-routes"
-import { cn } from "@/lib/utils"
+} from "@/src/components/ui/sidebar"
+import { useRoutes } from "@/src/hooks/use-routes"
+import { cn } from "@/src/lib/utils"
 import Link from "next/link"
 import { MdOutlineLogout } from "react-icons/md"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"

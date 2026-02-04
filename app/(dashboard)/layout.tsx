@@ -1,5 +1,5 @@
-import DashboardLayout from "@/components/shared/layouts/dashboard-layout"
-import { SidebarProvider } from "@/components/ui/sidebar"
+import DashboardLayout from "@/src/components/shared/layouts/dashboard-layout"
+import { SidebarProvider } from "@/src/components/ui/sidebar"
 
 function DashboardRoot({ children }: { children: React.ReactNode }) {
   return (

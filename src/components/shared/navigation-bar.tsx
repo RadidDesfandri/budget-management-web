@@ -1,8 +1,8 @@
 "use client"
 
-import Logo from "@/components/shared/logo"
-import { useRoutes } from "@/hooks/use-routes"
-import { cn } from "@/lib/utils"
+import Logo from "@/src/components/shared/logo"
+import { useRoutes } from "@/src/hooks/use-routes"
+import { cn } from "@/src/lib/utils"
 import Link from "next/link"
 import { useState } from "react"
 import { IoClose } from "react-icons/io5"
