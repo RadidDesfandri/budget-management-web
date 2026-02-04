@@ -1,4 +1,4 @@
-import AuthLayout from "@/components/shared/layouts/auth-layout"
+import AuthLayout from "@/src/components/shared/layouts/auth-layout"
 
 function LoginPage() {
   return (
