@@ -12,15 +12,19 @@ import {
   SidebarMenuItem
 } from "@/src/components/ui/sidebar"
 import { useRoutes } from "@/src/hooks/use-routes"
-import { cn } from "@/src/lib/utils"
+import { cn, getInitialUsername } from "@/src/lib/utils"
 import Link from "next/link"
 import { MdOutlineLogout } from "react-icons/md"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { Button } from "../ui/button"
 import Logo from "./logo"
+import { useLogout } from "@/src/hooks/use-logout"
+import { useMe } from "@/src/hooks/use-me"
 
 export function AppSidebar() {
   const { dashboardRoutes } = useRoutes()
+  const { mutate: logout, isPending: isLogoutPending } = useLogout()
+  const { data: me, isLoading: isMeLoading } = useMe()
 
   return (
     <Sidebar>
@@ -78,15 +82,15 @@ export function AppSidebar() {
         <div className="flex items-center justify-between rounded-xl border bg-gray-100 p-3">
           <div className="flex items-center gap-2">
             <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>CN</AvatarFallback>
+              <AvatarImage src={me?.data?.avatar_url ?? ""} />
+              <AvatarFallback>{getInitialUsername(me?.data?.name ?? "B F")}</AvatarFallback>
             </Avatar>
             <div className="-space-y-1.5">
-              <p className="text-lg font-bold">John Doe</p>
-              <p className="text-xs">jhondoe@gmail.com</p>
+              <p className="text-lg font-bold">{isMeLoading ? "..." : me?.data?.name}</p>
+              <p className="text-xs">{isMeLoading ? "..." : me?.data?.email}</p>
             </div>
           </div>
-          <Button size="icon" variant="ghost">
+          <Button disabled={isLogoutPending} onClick={() => logout()} size="icon" variant="ghost">
             <MdOutlineLogout size={50} />
           </Button>
         </div>
