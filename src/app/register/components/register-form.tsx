@@ -14,11 +14,12 @@ import { Input } from "@/src/components/ui/input"
 import { zodResolver } from "@hookform/resolvers/zod"
 import Link from "next/link"
 import { useForm } from "react-hook-form"
-import { registerSchema } from "../register-schema"
-import { RegisterData } from "../register-type"
+import { registerSchema } from "../register.schema"
+import { RegisterData } from "../register.type"
+import { useRegister } from "../register.api"
 
 const RegisterForm = () => {
-  //   const { mutate, isPending } = useRegister()
+  const { mutate, isPending } = useRegister()
 
   const form = useForm<RegisterData>({
     resolver: zodResolver(registerSchema),
@@ -32,9 +33,18 @@ const RegisterForm = () => {
   })
 
   const onSubmit = (values: RegisterData) => {
-    // mutate(values)
-    //
-    alert(JSON.stringify(values, null, 2))
+    mutate(values, {
+      onError: (error) => {
+        if (!error.fieldErrors) return
+
+        Object.entries(error.fieldErrors).forEach(([key, message]) => {
+          form.setError(key as keyof RegisterData, {
+            type: "server",
+            message
+          })
+        })
+      }
+    })
   }
 
   return (
@@ -81,7 +91,7 @@ const RegisterForm = () => {
                 <FormControl>
                   <Input
                     type="password"
-                    //   disabled={isPending}
+                    disabled={isPending}
                     placeholder="Enter your password"
                     {...field}
                   />
@@ -100,7 +110,7 @@ const RegisterForm = () => {
                 <FormControl>
                   <Input
                     type="password"
-                    //   disabled={isPending}
+                    disabled={isPending}
                     placeholder="Re-enter password"
                     {...field}
                   />
@@ -113,10 +123,14 @@ const RegisterForm = () => {
           <FormField
             control={form.control}
             name="terms"
-            render={({ field, fieldState }) => (
+            render={({ field }) => (
               <FormItem className="flex items-start">
                 <FormControl>
-                  <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                  <Checkbox
+                    disabled={isPending}
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
                 </FormControl>
 
                 <div className="space-y-1 leading-none">
@@ -129,28 +143,9 @@ const RegisterForm = () => {
         </div>
 
         <div className="mt-5 space-y-4">
-          <Button type="submit" size="lg" className="w-full">
-            Create Account
+          <Button disabled={isPending} type="submit" size="lg" className="w-full">
+            {isPending ? "Loading..." : "Create Account"}
           </Button>
-
-          {/* <div className="relative flex items-center py-2">
-            <div className="grow border-t border-gray-200" />
-            <span className="mx-4 shrink-0 text-xs font-medium text-gray-400">
-              Or continue with
-            </span>
-            <div className="grow border-t border-gray-200"></div>
-          </div>
-
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full"
-            size="lg"
-            onClick={() => toast.info("In development")}
-          >
-            <FcGoogle />
-            Sign up with Google
-          </Button> */}
 
           <p className="text-muted-foreground text-center text-sm">
             Already have an account?{" "}

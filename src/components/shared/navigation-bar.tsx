@@ -88,7 +88,7 @@ function NavigationBar() {
           </div>
 
           <p className="border-t bg-gray-50 p-5 text-center text-xs text-gray-500">
-            © {new Date().getFullYear()} Your Company
+            © {new Date().getFullYear()} BudgetFlow
           </p>
         </div>
       </div>

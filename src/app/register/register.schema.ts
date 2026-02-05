@@ -1,12 +1,16 @@
+import {
+  nullableStringSchema,
+  requiredDateTimeSchema,
+  requiredEmailSchema,
+  requiredNumberSchema,
+  requiredStringSchema
+} from "@/src/lib/zod"
 import * as z from "zod"
 
-export const registerSchema = z
+const registerSchema = z
   .object({
-    email: z
-      .string()
-      .min(1, { message: "Email is required" })
-      .email({ message: "Email format is invalid" }),
-    name: z.string().min(1, { message: "Fullname is required" }),
+    email: requiredEmailSchema,
+    name: requiredStringSchema.min(2).max(50),
     password: z
       .string()
       .min(6, { message: "Password must be at least 6 characters" })
@@ -23,3 +27,13 @@ export const registerSchema = z
     message: "Passwords do not match",
     path: ["confirmPassword"]
   })
+
+const registerResponseSchema = z.object({
+  id: requiredNumberSchema,
+  name: nullableStringSchema,
+  email: requiredEmailSchema,
+  updated_at: requiredDateTimeSchema,
+  created_at: requiredDateTimeSchema
+})
+
+export { registerSchema, registerResponseSchema }
