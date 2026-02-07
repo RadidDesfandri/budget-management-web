@@ -58,7 +58,7 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupLabel>SYSTEM</SidebarGroupLabel>
           <SidebarMenu>
-            {dashboardRoutes.slice(5, 7).map((route) => (
+            {dashboardRoutes.slice(5, 8).map((route) => (
               <Link key={route.name} href={route.path}>
                 <SidebarMenuItem>
                   <SidebarMenuButton

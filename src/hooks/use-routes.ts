@@ -3,6 +3,7 @@ import { useMemo } from "react"
 import { FaUsers, FaWallet } from "react-icons/fa"
 import { IoIosPaper, IoMdSettings } from "react-icons/io"
 import { MdCategory, MdDashboard, MdHistory } from "react-icons/md"
+import { RiUserSettingsFill } from "react-icons/ri"
 
 const useRoutes = () => {
   const pathname = usePathname()
@@ -50,6 +51,12 @@ const useRoutes = () => {
         name: "Organization Settings",
         icon: IoMdSettings,
         isActive: pathname === "/organization-settings"
+      },
+      {
+        path: "/user-settings",
+        name: "User Settings",
+        icon: RiUserSettingsFill,
+        isActive: pathname === "/user-settings"
       }
     ],
     [pathname]
