@@ -11,6 +11,7 @@ const userSchema = z.object({
   name: nullableStringSchema,
   email: requiredEmailSchema,
   avatar_url: nullableStringSchema,
+  full_avatar_url: nullableStringSchema,
   email_verified_at: requiredDateTimeSchema,
   updated_at: requiredDateTimeSchema,
   created_at: requiredDateTimeSchema
