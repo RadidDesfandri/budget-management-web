@@ -82,7 +82,7 @@ export function AppSidebar() {
         <div className="flex items-center justify-between rounded-xl border bg-gray-100 p-3">
           <div className="flex items-center gap-2">
             <Avatar>
-              <AvatarImage src={me?.data?.avatar_url ?? ""} />
+              <AvatarImage src={me?.data?.full_avatar_url ?? ""} />
               <AvatarFallback>{getInitialUsername(me?.data?.name ?? "B F")}</AvatarFallback>
             </Avatar>
             <div className="-space-y-1.5">
