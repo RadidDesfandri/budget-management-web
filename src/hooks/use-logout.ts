@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation"
 import { ApiError, ApiResponse } from "../types/api"
 import { normalizeApiError } from "../lib/utils"
 import axiosInstance from "../lib/axios"
+import { useAuth } from "../context/auth-context"
 
 const useLogout = () => {
   const router = useRouter()
+  const { logout: clearAuthCache } = useAuth()
 
   return useMutation<ApiResponse<null>, ApiError>({
     mutationFn: async () => {
@@ -20,6 +22,8 @@ const useLogout = () => {
     },
     onSuccess: (data) => {
       authToken.remove()
+
+      clearAuthCache()
 
       toast.success(data.message)
       router.push("/login")

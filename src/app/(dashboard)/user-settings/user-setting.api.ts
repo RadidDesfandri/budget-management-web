@@ -1,14 +1,15 @@
+import { useAuth } from "@/src/context/auth-context"
 import axiosInstance from "@/src/lib/axios"
 import { normalizeApiError } from "@/src/lib/utils"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { ChangePasswordData, EditProfileData } from "./user-setting.type"
 import { ApiError, ApiResponse } from "@/src/types/api"
 import { User } from "@/src/types/user"
-import { toast } from "sonner"
+import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
+import { toast } from "sonner"
+import { ChangePasswordData, EditProfileData } from "./user-setting.type"
 
 const useEditUser = () => {
-  const queryClient = useQueryClient()
+  const { refetchUser } = useAuth()
 
   return useMutation<ApiResponse<User>, ApiError, EditProfileData>({
     mutationFn: async (payload: EditProfileData) => {
@@ -21,7 +22,7 @@ const useEditUser = () => {
     },
     onSuccess: (data) => {
       toast.success(data.message)
-      queryClient.invalidateQueries({ queryKey: ["me"] })
+      refetchUser()
     },
     onError: (error) => {
       if (!error.fieldErrors) {
@@ -79,7 +80,7 @@ const useDeleteUser = () => {
 }
 
 const useChangeAvatar = () => {
-  const queryClient = useQueryClient()
+  const { refetchUser } = useAuth()
 
   return useMutation<ApiResponse<User>, ApiError, FormData>({
     mutationFn: async (formData: FormData) => {
@@ -96,7 +97,7 @@ const useChangeAvatar = () => {
     },
     onSuccess: (data) => {
       toast.success(data.message)
-      queryClient.invalidateQueries({ queryKey: ["me"] })
+      refetchUser()
     },
     onError: (error) => {
       if (!error.fieldErrors) {
@@ -107,7 +108,7 @@ const useChangeAvatar = () => {
 }
 
 const useRemoveAvatar = () => {
-  const queryClient = useQueryClient()
+  const { refetchUser } = useAuth()
 
   return useMutation<ApiResponse<User>, ApiError>({
     mutationFn: async () => {
@@ -120,7 +121,7 @@ const useRemoveAvatar = () => {
     },
     onSuccess: (data) => {
       toast.success(data.message)
-      queryClient.invalidateQueries({ queryKey: ["me"] })
+      refetchUser()
     },
     onError: (error) => {
       toast.error(error.message)
@@ -128,4 +129,4 @@ const useRemoveAvatar = () => {
   })
 }
 
-export { useEditUser, useChangePassword, useDeleteUser, useChangeAvatar, useRemoveAvatar }
+export { useChangeAvatar, useChangePassword, useDeleteUser, useEditUser, useRemoveAvatar }

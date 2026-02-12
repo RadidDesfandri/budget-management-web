@@ -11,6 +11,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from "@/src/components/ui/sidebar"
+import { useAuth } from "@/src/context/auth-context"
+import { useLogout } from "@/src/hooks/use-logout"
 import { useRoutes } from "@/src/hooks/use-routes"
 import { cn, getInitialUsername } from "@/src/lib/utils"
 import Link from "next/link"
@@ -18,13 +20,11 @@ import { MdOutlineLogout } from "react-icons/md"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { Button } from "../ui/button"
 import Logo from "./logo"
-import { useLogout } from "@/src/hooks/use-logout"
-import { useMe } from "@/src/hooks/use-me"
 
 export function AppSidebar() {
   const { dashboardRoutes } = useRoutes()
   const { mutate: logout, isPending: isLogoutPending } = useLogout()
-  const { data: me, isLoading: isMeLoading } = useMe()
+  const { user, isLoading } = useAuth()
 
   return (
     <Sidebar>
@@ -82,12 +82,12 @@ export function AppSidebar() {
         <div className="flex items-center justify-between rounded-xl border bg-gray-100 p-3">
           <div className="flex items-center gap-2">
             <Avatar>
-              <AvatarImage src={me?.data?.full_avatar_url ?? ""} />
-              <AvatarFallback>{getInitialUsername(me?.data?.name ?? "B F")}</AvatarFallback>
+              <AvatarImage src={user?.full_avatar_url ?? ""} />
+              <AvatarFallback>{getInitialUsername(user?.name ?? "B F")}</AvatarFallback>
             </Avatar>
             <div className="-space-y-1.5">
-              <p className="text-lg font-bold">{isMeLoading ? "..." : me?.data?.name}</p>
-              <p className="text-xs">{isMeLoading ? "..." : me?.data?.email}</p>
+              <p className="text-lg font-bold">{isLoading ? "..." : user?.name}</p>
+              <p className="text-xs">{isLoading ? "..." : user?.email}</p>
             </div>
           </div>
           <Button disabled={isLogoutPending} onClick={() => logout()} size="icon" variant="ghost">
