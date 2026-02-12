@@ -1,13 +1,5 @@
 "use client"
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar"
-import { Button } from "@/src/components/ui/button"
-import { Card, CardContent, CardDescription, CardTitle } from "@/src/components/ui/card"
-import { useMe } from "@/src/hooks/use-me"
-import { getInitialUsername } from "@/src/lib/utils"
-import { useChangeAvatar, useRemoveAvatar } from "../user-setting.api"
-import { useRef } from "react"
-import { toast } from "sonner"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,9 +11,17 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from "@/src/components/ui/alert-dialog"
+import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar"
+import { Button } from "@/src/components/ui/button"
+import { Card, CardContent, CardDescription, CardTitle } from "@/src/components/ui/card"
+import { useAuth } from "@/src/context/auth-context"
+import { getInitialUsername } from "@/src/lib/utils"
+import { useRef } from "react"
+import { toast } from "sonner"
+import { useChangeAvatar, useRemoveAvatar } from "../user-setting.api"
 
 function ProfilePicture() {
-  const { data } = useMe()
+  const { user } = useAuth()
   const changeAvatarMutation = useChangeAvatar()
   const removeAvatarMutation = useRemoveAvatar()
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -69,7 +69,7 @@ function ProfilePicture() {
   }
 
   const handleRemove = () => {
-    if (!data?.data?.full_avatar_url) {
+    if (!user?.avatar_url) {
       toast.error("No profile picture to delete")
       return
     }
@@ -81,8 +81,8 @@ function ProfilePicture() {
     <Card>
       <CardContent className="flex items-center gap-7">
         <Avatar size="extraLarge">
-          <AvatarImage src={data?.data?.full_avatar_url ?? ""} />
-          <AvatarFallback>{getInitialUsername(data?.data?.name ?? "")}</AvatarFallback>
+          <AvatarImage src={user?.full_avatar_url ?? ""} />
+          <AvatarFallback>{getInitialUsername(user?.name ?? "")}</AvatarFallback>
         </Avatar>
         <div>
           <CardTitle className="text-xl font-bold">Profile Picture</CardTitle>
@@ -103,7 +103,7 @@ function ProfilePicture() {
                 <Button
                   variant="ghost"
                   className="text-destructive"
-                  disabled={removeAvatarMutation.isPending || !data?.data?.avatar_url}
+                  disabled={removeAvatarMutation.isPending || !user?.avatar_url}
                 >
                   {removeAvatarMutation.isPending ? "Removing..." : "Remove"}
                 </Button>
@@ -122,7 +122,7 @@ function ProfilePicture() {
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={handleRemove}
-                    disabled={removeAvatarMutation.isPending || !data?.data?.avatar_url}
+                    disabled={removeAvatarMutation.isPending || !user?.avatar_url}
                   >
                     {removeAvatarMutation.isPending ? "Removing..." : "Remove"}
                   </AlertDialogAction>

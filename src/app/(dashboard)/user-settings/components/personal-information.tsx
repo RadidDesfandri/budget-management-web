@@ -2,10 +2,6 @@
 
 import { Button } from "@/src/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/src/components/ui/card"
-import { Separator } from "@/src/components/ui/separator"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { useMe } from "@/src/hooks/use-me"
 import {
   Form,
   FormControl,
@@ -15,14 +11,18 @@ import {
   FormMessage
 } from "@/src/components/ui/form"
 import { Input } from "@/src/components/ui/input"
-import { EditProfileData } from "../user-setting.type"
-import { editProfileSchema } from "../user-setting.schema"
 import { Label } from "@/src/components/ui/label"
+import { Separator } from "@/src/components/ui/separator"
+import { useAuth } from "@/src/context/auth-context"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect } from "react"
+import { useForm } from "react-hook-form"
 import { useEditUser } from "../user-setting.api"
+import { editProfileSchema } from "../user-setting.schema"
+import { EditProfileData } from "../user-setting.type"
 
 function PersonalInformation() {
-  const { data: me } = useMe()
+  const { user } = useAuth()
   const { mutate, isPending: isEditPending } = useEditUser()
 
   const form = useForm<EditProfileData>({
@@ -33,12 +33,12 @@ function PersonalInformation() {
   })
 
   useEffect(() => {
-    if (me?.data?.name) {
+    if (user?.name) {
       form.reset({
-        name: me.data.name
+        name: user.name
       })
     }
-  }, [me?.data?.name, form])
+  }, [user?.name, form])
 
   const onSubmit = (values: EditProfileData) => {
     mutate(values, {
@@ -87,7 +87,7 @@ function PersonalInformation() {
 
             <FormItem>
               <Label>Email Address</Label>
-              <Input type="email" disabled placeholder="name@company.com" value={me?.data?.email} />
+              <Input type="email" disabled placeholder="name@company.com" value={user?.email} />
             </FormItem>
           </CardContent>
 
