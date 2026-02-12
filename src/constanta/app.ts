@@ -7,4 +7,16 @@ const publicRoutes = [
   "/verify-email"
 ]
 
-export { publicRoutes }
+const protectedRoutes = [
+  "/dashboard",
+  "/preparation",
+  "/expenses",
+  "/budgets",
+  "/categories",
+  "/members",
+  "/activity-logs",
+  "/organization-settings",
+  "/user-settings"
+]
+
+export { publicRoutes, protectedRoutes }
