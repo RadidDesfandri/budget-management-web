@@ -1,13 +1,14 @@
 import axiosInstance from "@/src/lib/axios"
 import { normalizeApiError } from "@/src/lib/utils"
 import { ApiError, ApiResponse } from "@/src/types/api"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import { OrganizationData } from "./preparation.type"
 import { useAuth } from "@/src/context/auth-context"
 
 const useCreateOrganization = () => {
   const { refetchUser } = useAuth()
+  const queryClient = useQueryClient()
 
   return useMutation<ApiResponse<null>, ApiError, OrganizationData>({
     mutationFn: async (payload: OrganizationData) => {
@@ -33,6 +34,7 @@ const useCreateOrganization = () => {
     onSuccess: (data) => {
       toast.success(data.message)
       refetchUser()
+      queryClient.refetchQueries({ queryKey: ["dropdown-organizations"] })
     },
     onError: (error) => {
       if (!error.fieldErrors) {
