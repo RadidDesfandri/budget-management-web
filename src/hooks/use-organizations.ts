@@ -31,6 +31,7 @@ const useSetActiveOrganization = () => {
     onSuccess: (data) => {
       toast.success(data.message)
       queryClient.refetchQueries({ queryKey: ["dropdown-organizations"] })
+      queryClient.refetchQueries({ queryKey: ["members"] })
     },
     onError: (err) => {
       if (!err.fieldErrors) {
