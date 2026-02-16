@@ -9,8 +9,13 @@ import { InviteMemberDialog } from "./components/invite-member-dialog"
 import { memberColumns } from "./components/member-columns"
 import { MembersStats } from "./components/members-stats"
 import { useGetMemberInOrganization } from "./member.api"
+import { useParams } from "next/navigation"
 
 function MembersPage() {
+  const params = useParams()
+
+  const organizationId = params.organizationId as string
+
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10
@@ -32,7 +37,8 @@ function MembersPage() {
     page_size: pagination.pageSize,
     search: debounceSearch,
     sort_by: sortBy,
-    order_by: sortOrder
+    order_by: sortOrder,
+    organizationId: Number(organizationId)
   })
 
   return (

@@ -1,10 +1,8 @@
 "use client"
 
-import {
-  useGetDropdownOrganizations,
-  useSetActiveOrganization
-} from "@/src/hooks/use-organizations"
+import { useGetDropdownOrganizations } from "@/src/hooks/use-organizations"
 import { getInitialUsername } from "@/src/lib/utils"
+import { useParams, usePathname, useRouter } from "next/navigation"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import {
   Select,
@@ -17,31 +15,39 @@ import {
 import { Skeleton } from "../ui/skeleton"
 
 function OrganizationOptions() {
-  const { data: dropdownData, isLoading } = useGetDropdownOrganizations()
-  const { mutate, isPending } = useSetActiveOrganization()
+  const router = useRouter()
+  const pathname = usePathname()
+  const params = useParams()
 
-  const handleSetActiveOrganization = (organization_id: string) => {
-    mutate({ organization_id: Number(organization_id) })
+  const currentUrlOrgId = params.organizationId as string
+  const { data: dropdownData, isLoading } = useGetDropdownOrganizations(Number(currentUrlOrgId))
+
+  const handleSetActiveOrganization = (newOrgId: string) => {
+    if (!pathname || !currentUrlOrgId) return
+
+    const newPath = pathname.replace(`/${currentUrlOrgId}`, `/${newOrgId}`)
+
+    router.push(newPath)
   }
 
   const currentDropdown = dropdownData?.data?.meta
-  const activeOrgId = currentDropdown?.active_organization_info.id
+  const activeOrgIdFromApi = currentDropdown?.active_organization_info.id
   const dropdownOrgList = dropdownData?.data?.organizations
 
   if (isLoading || !dropdownData) return <Skeleton className="h-8 w-48 md:w-60" />
 
   return (
     <Select
-      value={String(activeOrgId ?? "")}
+      value={String(activeOrgIdFromApi ?? currentUrlOrgId)}
       onValueChange={handleSetActiveOrganization}
-      disabled={isPending}
+      disabled={isLoading}
     >
       <SelectTrigger className="w-full max-w-48 focus:ring-0 focus-visible:ring-0 md:max-w-60">
         <div className="flex items-center gap-2">
           <Avatar size="sm" className="rounded-sm">
             <AvatarImage src={currentDropdown?.active_organization_info.full_logo_url ?? ""} />
             <AvatarFallback className="rounded-sm">
-              {getInitialUsername(currentDropdown?.active_organization_info.text ?? "")}
+              {getInitialUsername(currentDropdown?.active_organization_info.text ?? "ORG")}
             </AvatarFallback>
           </Avatar>
           <span

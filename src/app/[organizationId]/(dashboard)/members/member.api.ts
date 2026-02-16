@@ -4,15 +4,20 @@ import { QueryParams } from "@/src/types/global"
 import { ResponseMembers } from "@/src/types/member"
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 
+interface ParamsGetMemberInOrganization extends QueryParams {
+  organizationId: number
+}
+
 const useGetMemberInOrganization = ({
   page,
   page_size,
   search,
   sort_by,
-  order_by
-}: QueryParams) => {
+  order_by,
+  organizationId
+}: ParamsGetMemberInOrganization) => {
   return useQuery({
-    queryKey: ["members", { page, page_size, search, sort_by, order_by }],
+    queryKey: ["members", { page, page_size, search, sort_by, order_by, organizationId }],
     queryFn: async () => {
       const params = new URLSearchParams({
         page: String(page ?? 0 + 1),
@@ -23,7 +28,7 @@ const useGetMemberInOrganization = ({
       })
 
       const { data } = await axiosInstance.get<ApiResponse<ResponseMembers>>(
-        "/v1/organization/member-list",
+        `/v1/org/${organizationId}/member-list`,
         { params }
       )
 

@@ -1,4 +1,4 @@
-import { usePathname } from "next/navigation"
+import { useParams, usePathname } from "next/navigation"
 import { useMemo } from "react"
 import { FaUsers, FaWallet } from "react-icons/fa"
 import { IoIosPaper, IoMdSettings } from "react-icons/io"
@@ -7,56 +7,58 @@ import { RiUserSettingsFill } from "react-icons/ri"
 
 const useRoutes = () => {
   const pathname = usePathname()
+  const params = useParams()
+  const organizationId = params.organizationId as string
 
   const dashboardRoutes = useMemo(
     () => [
       {
-        path: "/dashboard",
+        path: `/${organizationId}/dashboard`,
         name: "Dashboard",
         icon: MdDashboard,
-        isActive: pathname === "/dashboard"
+        isActive: pathname === `/${organizationId}/dashboard`
       },
       {
-        path: "/expenses",
+        path: `/${organizationId}/expenses`,
         name: "Expenses",
         icon: IoIosPaper,
-        isActive: pathname === "/expenses"
+        isActive: pathname === `/${organizationId}/expenses`
       },
       {
-        path: "/budgets",
+        path: `/${organizationId}/budgets`,
         name: "Budgets",
         icon: FaWallet,
-        isActive: pathname === "/budgets"
+        isActive: pathname === `/${organizationId}/budgets`
       },
       {
-        path: "/categories",
+        path: `/${organizationId}/categories`,
         name: "Categories",
         icon: MdCategory,
-        isActive: pathname === "/categories"
+        isActive: pathname === `/${organizationId}/categories`
       },
       {
-        path: "/members",
+        path: `/${organizationId}/members`,
         name: "Members",
         icon: FaUsers,
-        isActive: pathname === "/members"
+        isActive: pathname === `/${organizationId}/members`
       },
       {
-        path: "/activity-logs",
+        path: `/${organizationId}/activity-logs`,
         name: "Activity Logs",
         icon: MdHistory,
-        isActive: pathname === "/activity-logs"
+        isActive: pathname === `/${organizationId}/activity-logs`
       },
       {
-        path: "/organization-settings",
+        path: `/${organizationId}/organization-settings`,
         name: "Organization Settings",
         icon: IoMdSettings,
-        isActive: pathname === "/organization-settings"
+        isActive: pathname === `/${organizationId}/organization-settings`
       },
       {
-        path: "/user-settings",
+        path: `/${organizationId}/user-settings`,
         name: "User Settings",
         icon: RiUserSettingsFill,
-        isActive: pathname === "/user-settings"
+        isActive: pathname === `/${organizationId}/user-settings`
       }
     ],
     [pathname]
