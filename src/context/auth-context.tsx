@@ -54,6 +54,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const user = userData?.data ?? null
   const isAuthenticated = !!user
   const hasOrganization = (user?.organizations?.length ?? 0) > 0
+  const firstOrgId = user?.organizations?.[0]?.id
 
   const isPublicRoute = publicRoutes.includes(pathname)
 
@@ -75,7 +76,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (user) {
       if (isPublicRoute) {
         if (hasOrganization) {
-          router.push("/dashboard")
+          router.push(`/${firstOrgId}/dashboard`)
         } else {
           router.push("/preparation")
         }
@@ -88,7 +89,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       if (hasOrganization && pathname === "/preparation") {
-        router.push("/dashboard")
+        router.push(`/${firstOrgId}/dashboard`)
         return
       }
     }

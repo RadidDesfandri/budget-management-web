@@ -18,14 +18,9 @@ interface DropdownOrganizationsResponse {
   organizations: DropdownOrganization[]
 }
 
-interface SetActiveOrganizationPayload {
-  organization_id: number
-}
-
 export type {
   Organization,
   DropdownOrganization,
   DropdownOrganizationsResponse,
-  DropdownOrganizationMeta,
-  SetActiveOrganizationPayload
+  DropdownOrganizationMeta
 }

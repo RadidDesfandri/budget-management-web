@@ -20,7 +20,7 @@ const useCreateOrganization = () => {
           formData.append("logo", payload.logo)
         }
 
-        const { data } = await axiosInstance.post("/v1/organization/store", formData, {
+        const { data } = await axiosInstance.post("/v1/org/store", formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
