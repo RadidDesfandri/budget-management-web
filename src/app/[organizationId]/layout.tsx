@@ -1,3 +1,9 @@
+import { cookies } from "next/headers"
+import { getOrganization } from "./organization.api"
+import { notFound, redirect } from "next/navigation"
+
+const TOKEN_KEY = process.env.NEXT_PUBLIC_AUTH_TOKEN_KEY || "auth_token"
+
 export default async function OrganizationLayout({
   children,
   params
@@ -6,12 +12,14 @@ export default async function OrganizationLayout({
   params: Promise<{ organizationId: string }>
 }) {
   const { organizationId } = await params
+  const cookieStore = await cookies()
+  const token = cookieStore.get(TOKEN_KEY)?.value
 
-  console.log(organizationId)
+  const { statusCode } = await getOrganization(organizationId, token)
 
-  // 1. Cek apakah user punya akses ke Org ID ini via API Backend Anda
-  // const hasAccess = await checkOrgAccess(organizationId);
-  // if (!hasAccess) return notFound() atau redirect('/unauthorized');
+  if (statusCode === 404) return notFound()
+
+  if (statusCode === 403) redirect("/403")
 
   return <section>{children}</section>
 }
