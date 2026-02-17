@@ -5,8 +5,8 @@ import { Button } from "@/src/components/ui/button"
 import { AlertCircle } from "lucide-react"
 
 export default function Error({
-  error,
-  reset
+  error
+  // reset
 }: {
   error: Error & { digest?: string }
   reset: () => void
@@ -34,7 +34,7 @@ export default function Error({
         </div>
 
         <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
-          <Button onClick={reset} variant="default">
+          <Button onClick={() => window.location.reload()} variant="default">
             Try again
           </Button>
           <Button onClick={() => (window.location.href = "/")} variant="outline">

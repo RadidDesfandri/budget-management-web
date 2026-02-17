@@ -1,8 +1,11 @@
 import axiosInstance from "@/src/lib/axios"
-import { ApiResponse } from "@/src/types/api"
+import { ApiError, ApiResponse } from "@/src/types/api"
 import { QueryParams } from "@/src/types/global"
 import { ResponseMembers } from "@/src/types/member"
-import { keepPreviousData, useQuery } from "@tanstack/react-query"
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { InviteMemberInput } from "./member.type"
+import { normalizeApiError } from "@/src/lib/utils"
+import { toast } from "sonner"
 
 interface ParamsGetMemberInOrganization extends QueryParams {
   organizationId: number
@@ -39,4 +42,32 @@ const useGetMemberInOrganization = ({
   })
 }
 
-export { useGetMemberInOrganization }
+const useInviteMember = (organizationId: string) => {
+  const queryClient = useQueryClient()
+
+  return useMutation<ApiResponse<null>, ApiError, InviteMemberInput>({
+    mutationFn: async (payload: InviteMemberInput) => {
+      try {
+        const { data } = await axiosInstance.post(
+          `/v1/org/${organizationId}/invitation/create`,
+          payload
+        )
+
+        return data
+      } catch (error) {
+        throw normalizeApiError(error)
+      }
+    },
+    onSuccess: (data) => {
+      toast.success(data.message)
+      queryClient.refetchQueries({ queryKey: ["members", { organizationId }] })
+    },
+    onError: (error) => {
+      if (!error.fieldErrors) {
+        toast.error(error.message)
+      }
+    }
+  })
+}
+
+export { useGetMemberInOrganization, useInviteMember }
