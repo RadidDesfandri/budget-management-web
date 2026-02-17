@@ -1,6 +1,7 @@
+import { OrganizationProvider } from "@/src/context/organization-context"
 import { cookies } from "next/headers"
+import { forbidden, notFound } from "next/navigation"
 import { getOrganization } from "./organization.api"
-import { notFound, redirect } from "next/navigation"
 
 const TOKEN_KEY = process.env.NEXT_PUBLIC_AUTH_TOKEN_KEY || "auth_token"
 
@@ -15,11 +16,13 @@ export default async function OrganizationLayout({
   const cookieStore = await cookies()
   const token = cookieStore.get(TOKEN_KEY)?.value
 
-  const { statusCode } = await getOrganization(organizationId, token)
+  const { statusCode, data } = await getOrganization(organizationId, token)
 
-  if (statusCode === 404) return notFound()
+  if (statusCode === 404) notFound()
 
-  if (statusCode === 403) redirect("/403")
+  if (statusCode === 403) forbidden()
 
-  return <section>{children}</section>
+  if (!data) notFound()
+
+  return <OrganizationProvider value={data}>{children}</OrganizationProvider>
 }

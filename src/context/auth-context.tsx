@@ -3,7 +3,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { usePathname, useRouter } from "next/navigation"
 import { createContext, useContext, useEffect } from "react"
-import { publicRoutes } from "../constanta/app"
+import { publicRoutes } from "../config/app"
 import { authToken } from "../lib/auth-token"
 import axiosInstance from "../lib/axios"
 import { ApiResponse } from "../types/api"

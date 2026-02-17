@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from "next/server"
-import { protectedRoutes, publicRoutes } from "./constanta/app"
+import { protectedRoutes, publicRoutes } from "./config/app"
 
 const TOKEN_KEY = process.env.NEXT_PUBLIC_AUTH_TOKEN_KEY || "auth_token"
 
