@@ -1,7 +1,7 @@
 "use client"
 
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { createContext, useContext, useEffect } from "react"
 import { publicRoutes } from "../config/app"
 import { authToken } from "../lib/auth-token"
@@ -29,6 +29,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter()
   const pathname = usePathname()
   const queryClient = useQueryClient()
+  const searchParams = useSearchParams()
 
   const {
     data: userData,
@@ -58,10 +59,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const isPublicRoute = publicRoutes.includes(pathname)
 
+  const redirectTarget = searchParams.get("redirect")
+  const hasToken = searchParams.get("token")
+
+  const isBypassingPublicRoute = user && isPublicRoute && (!!redirectTarget || !!hasToken)
+
   const shouldRedirect =
     !isLoading &&
     ((!user && !isPublicRoute) ||
-      (user && isPublicRoute) ||
+      (user && isPublicRoute && !isBypassingPublicRoute) ||
       (user && !hasOrganization && pathname !== "/preparation") ||
       (user && hasOrganization && pathname === "/preparation"))
 
@@ -74,6 +80,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     if (user) {
+      if (redirectTarget) {
+        return
+      }
+
+      if (pathname.includes("/invitation/accept")) {
+        return
+      }
+
       if (isPublicRoute) {
         if (hasOrganization) {
           router.push(`/${firstOrgId}/dashboard`)
@@ -93,7 +107,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return
       }
     }
-  }, [user, isLoading, pathname, hasOrganization, isPublicRoute, router])
+  }, [user, isLoading, pathname, hasOrganization, isPublicRoute, router, redirectTarget])
 
   if (isLoading || shouldRedirect) {
     return (

@@ -6,7 +6,7 @@ const TOKEN_KEY = process.env.NEXT_PUBLIC_AUTH_TOKEN_KEY || "auth_token"
 export function proxy(request: NextRequest) {
   const token = request.cookies.get(TOKEN_KEY)?.value
   const currentOrgId = request.cookies.get("current_organization_id")?.value
-  const { pathname } = request.nextUrl
+  const { pathname, searchParams } = request.nextUrl
 
   if (!token && protectedRoutes.some((route) => pathname.startsWith(route))) {
     const url = request.nextUrl.clone()
@@ -15,6 +15,10 @@ export function proxy(request: NextRequest) {
   }
 
   if (token && publicRoutes.includes(pathname)) {
+    if (searchParams.has("token") || searchParams.has("redirect")) {
+      return NextResponse.next()
+    }
+
     const url = request.nextUrl.clone()
 
     if (currentOrgId) {
