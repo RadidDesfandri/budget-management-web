@@ -4,7 +4,8 @@ const publicRoutes = [
   "/register",
   "/forgot-password",
   "/reset-password",
-  "/verify-email"
+  "/verify-email",
+  "/invitation/accept"
 ]
 
 const protectedRoutes = [

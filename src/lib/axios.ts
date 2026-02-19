@@ -28,8 +28,9 @@ axiosInstance.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       const isLoginRequest = error.config?.url?.includes("/login")
+      const isAcceptInvitationRequest = error.config?.url?.includes("/accept")
 
-      if (!isLoginRequest) {
+      if (!isLoginRequest && !isAcceptInvitationRequest) {
         authToken.remove()
         if (typeof window !== "undefined") {
           window.location.href = "/login"

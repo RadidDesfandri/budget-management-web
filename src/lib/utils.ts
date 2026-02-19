@@ -103,4 +103,37 @@ function getInitialUsername(name: string) {
   return firstInitial + lastInitial
 }
 
-export { isEmpty, cn, isValidNumber, normalizeApiError, getInitialUsername }
+function isExpiringSoon(expiresAt: string, withinHours = 48): boolean {
+  const expiresDate = new Date(expiresAt)
+  const now = new Date()
+  const diffMs = expiresDate.getTime() - now.getTime()
+  const diffHours = diffMs / (1000 * 60 * 60)
+
+  return diffHours > 0 && diffHours <= withinHours
+}
+
+function getExpiresInLabel(expiresAt: string): string | null {
+  const expiresDate = new Date(expiresAt)
+  const now = new Date()
+  const diffMs = expiresDate.getTime() - now.getTime()
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
+
+  if (diffHours <= 0 || diffHours > 48) return null
+
+  if (diffHours < 1) {
+    const diffMinutes = Math.floor(diffMs / (1000 * 60))
+    return `This invitation expires in ${diffMinutes} minute${diffMinutes !== 1 ? "s" : ""}`
+  }
+
+  return `This invitation expires in ${diffHours} hour${diffHours !== 1 ? "s" : ""}`
+}
+
+export {
+  isEmpty,
+  cn,
+  isValidNumber,
+  normalizeApiError,
+  getInitialUsername,
+  isExpiringSoon,
+  getExpiresInLabel
+}
