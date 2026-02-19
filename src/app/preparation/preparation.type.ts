@@ -1,6 +1,7 @@
 import * as z from "zod"
-import { createOrganizationSchema } from "./preparation.schema"
+import { acceptInvitationSchema, createOrganizationSchema } from "./preparation.schema"
 
 type OrganizationData = z.infer<typeof createOrganizationSchema>
+type AcceptInvitationData = z.infer<typeof acceptInvitationSchema>
 
-export type { OrganizationData }
+export type { OrganizationData, AcceptInvitationData }

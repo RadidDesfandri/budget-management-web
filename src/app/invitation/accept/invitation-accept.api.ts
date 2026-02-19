@@ -5,9 +5,11 @@ import { useMutation, useQuery } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { VerifyTokenInvitationResponse } from "./actions"
+import { useAuth } from "@/src/context/auth-context"
 
 const useAcceptInvitation = () => {
   const router = useRouter()
+  const { refetchUser } = useAuth()
 
   return useMutation<ApiResponse<{ organization_id: number }>, ApiError, string>({
     mutationFn: async (token: string) => {
@@ -20,6 +22,7 @@ const useAcceptInvitation = () => {
       }
     },
     onSuccess: (data) => {
+      refetchUser()
       toast.success(data.message)
       router.push(`/${data.data?.organization_id}/dashboard`)
     },

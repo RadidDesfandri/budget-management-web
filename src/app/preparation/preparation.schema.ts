@@ -1,3 +1,4 @@
+import { requiredStringSchema } from "@/src/lib/zod"
 import * as z from "zod"
 
 const createOrganizationSchema = z.object({
@@ -8,4 +9,8 @@ const createOrganizationSchema = z.object({
   logo: z.instanceof(File).optional().nullable()
 })
 
-export { createOrganizationSchema }
+const acceptInvitationSchema = z.object({
+  token: requiredStringSchema
+})
+
+export { createOrganizationSchema, acceptInvitationSchema }

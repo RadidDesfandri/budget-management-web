@@ -3,7 +3,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { createContext, useContext, useEffect } from "react"
-import { publicRoutes } from "../config/app"
+import { routeConfig } from "../config/route"
 import { authToken } from "../lib/auth-token"
 import axiosInstance from "../lib/axios"
 import { ApiResponse } from "../types/api"
@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const hasOrganization = (user?.organizations?.length ?? 0) > 0
   const firstOrgId = user?.organizations?.[0]?.id
 
-  const isPublicRoute = publicRoutes.includes(pathname)
+  const isPublicRoute = routeConfig.public.some((regex) => regex.test(pathname))
 
   const redirectTarget = searchParams.get("redirect")
   const hasToken = searchParams.get("token")
