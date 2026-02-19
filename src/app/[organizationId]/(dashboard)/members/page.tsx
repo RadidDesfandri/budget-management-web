@@ -33,7 +33,7 @@ function MembersPage() {
   const debounceSearch = useDebounceValue(searchValue, 500)
 
   const { data, isLoading } = useGetMemberInOrganization({
-    page: pagination.pageIndex + 1,
+    page: pagination.pageIndex,
     page_size: pagination.pageSize,
     search: debounceSearch,
     sort_by: sortBy,

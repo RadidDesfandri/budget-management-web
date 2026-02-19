@@ -1,9 +1,9 @@
-import { Button } from "@/src/components/ui/button"
 import Image from "next/image"
 import { AiFillPlusCircle } from "react-icons/ai"
 import CardPreparation from "./components/card-preparation"
 import { IoMdMail } from "react-icons/io"
 import PreparationNewForm from "./components/preparation-new-form"
+import JoinViaInvitation from "./components/join-via-invitation"
 
 function Preparation() {
   return (
@@ -13,6 +13,7 @@ function Preparation() {
         alt="Minimal flat illustration of people collaborating and building an organization"
         width={400}
         height={400}
+        loading="eager"
         className="h-56 w-56 object-contain"
       />
 
@@ -36,11 +37,7 @@ function Preparation() {
           description="Enter an invite code or accept an email invitation."
           icon={IoMdMail}
           variant="secondary"
-          action={
-            <Button variant="outline" size="lg" className="w-full">
-              Join Team
-            </Button>
-          }
+          action={<JoinViaInvitation />}
         />
       </div>
     </div>

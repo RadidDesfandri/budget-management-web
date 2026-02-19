@@ -20,10 +20,10 @@ const useGetMemberInOrganization = ({
   organizationId
 }: ParamsGetMemberInOrganization) => {
   return useQuery({
-    queryKey: ["members", { page, page_size, search, sort_by, order_by, organizationId }],
+    queryKey: ["members", organizationId, page, page_size, search, sort_by, order_by],
     queryFn: async () => {
       const params = new URLSearchParams({
-        page: String(page ?? 0 + 1),
+        page: String((page ?? 0) + 1),
         page_size: String(page_size),
         ...(sort_by && { sort_by: sort_by }),
         ...(order_by && { order_by: order_by }),
@@ -58,9 +58,12 @@ const useInviteMember = (organizationId: string) => {
         throw normalizeApiError(error)
       }
     },
-    onSuccess: (data) => {
-      toast.success(data.message)
-      queryClient.refetchQueries({ queryKey: ["members", { organizationId }] })
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["members", Number(organizationId)]
+      })
+
+      toast.success("Invitation sent successfully")
     },
     onError: (error) => {
       if (!error.fieldErrors) {
