@@ -10,7 +10,7 @@ interface StatCardProps {
   colorScheme: "blue" | "purple" | "green" | "red" | "yellow"
 }
 
-const colorClasses = {
+const startColorClasses = {
   blue: "bg-blue-50 text-blue-600",
   purple: "bg-purple-50 text-purple-600",
   green: "bg-green-50 text-green-600",
@@ -22,7 +22,7 @@ export function StatCard({ icon: Icon, label, value, colorScheme }: StatCardProp
   return (
     <Card>
       <CardContent className="flex items-center gap-4">
-        <div className={cn("rounded-md p-3", colorClasses[colorScheme])}>
+        <div className={cn("rounded-md p-3", startColorClasses[colorScheme])}>
           <Icon className="h-6 w-6" />
         </div>
         <div>

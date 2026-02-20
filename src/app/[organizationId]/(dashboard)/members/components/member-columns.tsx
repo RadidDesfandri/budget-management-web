@@ -2,11 +2,11 @@
 
 import { DataTableColumnHeader } from "@/src/components/shared/data-table-column-header"
 import { DataTableRowActions } from "@/src/components/shared/data-table-row-actions"
+import RoleBadge from "@/src/components/shared/role-badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar"
-import { Badge } from "@/src/components/ui/badge"
 import { Checkbox } from "@/src/components/ui/checkbox"
 import { useAuth } from "@/src/context/auth-context"
-import { cn, getInitialUsername } from "@/src/lib/utils"
+import { getInitialUsername } from "@/src/lib/utils"
 import { MemberData, Role } from "@/src/types/member"
 import { User } from "@/src/types/user"
 import { ColumnDef } from "@tanstack/react-table"
@@ -72,14 +72,7 @@ export const memberColumns: ColumnDef<MemberData>[] = [
     cell: ({ row }) => {
       const role = row.getValue("role") as Role
 
-      const colorClasses = {
-        admin: "bg-blue-50 text-blue-600",
-        member: "bg-neutral-100 text-neutral-600",
-        finance: "bg-yellow-50 text-yellow-600",
-        owner: "bg-red-50 text-red-600"
-      }
-
-      return <Badge className={cn("capitalize", colorClasses[role])}>{role}</Badge>
+      return <RoleBadge role={role} />
     }
   },
   {
