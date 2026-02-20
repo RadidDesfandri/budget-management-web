@@ -8,12 +8,14 @@ import Link from "next/link"
 import { useParams } from "next/navigation"
 import ListInvitations from "./components/list-invitations"
 import { useGetInvitations } from "./invitation.api"
+import { useState } from "react"
 
 function Invitations() {
   const params = useParams()
   const organizationId = params.organizationId as string
+  const [page, setPage] = useState<number>(0)
 
-  const { data: mainData, isLoading, isError } = useGetInvitations({ status: "pending" })
+  const { data: mainData, isLoading, isError } = useGetInvitations({ status: "pending", page })
 
   const pendingCount = mainData?.total ?? 0
 
@@ -34,7 +36,14 @@ function Invitations() {
         }
       />
 
-      <ListInvitations data={mainData?.data} isLoading={isLoading} isError={isError} />
+      <ListInvitations
+        data={mainData?.data}
+        isLoading={isLoading}
+        isError={isError}
+        page={page}
+        totalPages={mainData?.total ?? 0}
+        onPageChange={setPage}
+      />
     </div>
   )
 }
