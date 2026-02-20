@@ -4,12 +4,13 @@ import {
   useAcceptInvitation,
   useDeclineInvitation
 } from "@/src/app/invitation/accept/invitation-accept.api"
+import RoleBadge from "@/src/components/shared/role-badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar"
-import { Badge } from "@/src/components/ui/badge"
 import { Button } from "@/src/components/ui/button"
 import { Card, CardContent } from "@/src/components/ui/card"
 import { cn } from "@/src/lib/utils"
 import { InvitationData } from "@/src/types/invitation"
+import { Role } from "@/src/types/member"
 import { Loader2 } from "lucide-react"
 
 interface CardInvitationsProps {
@@ -17,18 +18,12 @@ interface CardInvitationsProps {
 }
 
 function CardInvitations({ invitation }: CardInvitationsProps) {
-  const baseClassName = "flex items-center justify-between gap-4"
   const { mutate: accept, isPending: isAccepting } = useAcceptInvitation()
   const { mutate: decline, isPending: isDeclining } = useDeclineInvitation()
 
   const isLoading = isAccepting || isDeclining
 
-  const colorClasses: Record<InvitationData["role"], string> = {
-    admin: "bg-blue-50 text-blue-600",
-    member: "bg-neutral-100 text-neutral-600",
-    finance: "bg-yellow-50 text-yellow-600",
-    owner: "bg-red-50 text-red-600"
-  }
+  const baseClassName = "flex items-center justify-between gap-4"
 
   return (
     <Card>
@@ -44,9 +39,7 @@ function CardInvitations({ invitation }: CardInvitationsProps) {
         </div>
         <div className={cn(baseClassName)}>
           <p className="text-muted-foreground">Role assigned</p>
-          <Badge className={cn("capitalize", colorClasses[invitation.role])}>
-            {invitation.role}
-          </Badge>
+          <RoleBadge role={invitation.role as Role} />
         </div>
         <div className={cn(baseClassName)}>
           <p className="text-muted-foreground">Invited by</p>
@@ -62,6 +55,7 @@ function CardInvitations({ invitation }: CardInvitationsProps) {
             })}
           </p>
         </div>
+
         <div className={cn(baseClassName)}>
           <Button
             variant="outline"
