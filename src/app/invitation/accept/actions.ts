@@ -1,18 +1,11 @@
 import axiosInstance from "@/src/lib/axios"
 import { ApiResponse } from "@/src/types/api"
-import { Invitation } from "@/src/types/invitation"
-import { Organization } from "@/src/types/organization"
-import { User } from "@/src/types/user"
+import { InvitationData } from "@/src/types/invitation"
 import { AxiosError } from "axios"
-
-export interface VerifyTokenInvitationResponse extends Invitation {
-  organization: Omit<Organization, "pivot">
-  invited_by: Pick<User, "id" | "name">
-}
 
 const verifyTokenInvitation = async (token: string) => {
   try {
-    const { data } = await axiosInstance.get<ApiResponse<VerifyTokenInvitationResponse>>(
+    const { data } = await axiosInstance.get<ApiResponse<InvitationData>>(
       `/v1/org/invitation/verify?token=${token}`
     )
 

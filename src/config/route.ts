@@ -15,6 +15,7 @@ const routeConfig = {
     /^\/budgets$/,
     /^\/categories$/,
     /^\/members$/,
+    /^\/invitations$/,
     /^\/activity-logs$/,
     /^\/organization-settings$/,
     /^\/user-settings$/

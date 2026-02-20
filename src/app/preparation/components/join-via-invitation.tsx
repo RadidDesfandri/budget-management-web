@@ -25,9 +25,11 @@ import {
   FormMessage
 } from "@/src/components/ui/form"
 import { Input } from "@/src/components/ui/input"
+import { useRouter } from "next/navigation"
 
 function JoinViaInvitation() {
   const { mutate, isPending } = useAcceptInvitation()
+  const router = useRouter()
 
   const form = useForm<AcceptInvitationData>({
     resolver: zodResolver(acceptInvitationSchema),
@@ -38,6 +40,10 @@ function JoinViaInvitation() {
 
   const onSubmit = (values: AcceptInvitationData) => {
     mutate(values.token, {
+      onSuccess: (data) => {
+        form.reset()
+        router.push(`/${data.data?.organization_id}/dashboard`)
+      },
       onError: (error) => {
         if (!error.fieldErrors) return
 

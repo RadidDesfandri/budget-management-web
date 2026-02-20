@@ -1,14 +1,13 @@
+import { useAuth } from "@/src/context/auth-context"
 import axiosInstance from "@/src/lib/axios"
 import { normalizeApiError } from "@/src/lib/utils"
 import { ApiError, ApiResponse } from "@/src/types/api"
-import { useMutation, useQuery } from "@tanstack/react-query"
-import { useRouter } from "next/navigation"
+import { InvitationData } from "@/src/types/invitation"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
-import { VerifyTokenInvitationResponse } from "./actions"
-import { useAuth } from "@/src/context/auth-context"
 
 const useAcceptInvitation = () => {
-  const router = useRouter()
+  const queryClient = useQueryClient()
   const { refetchUser } = useAuth()
 
   return useMutation<ApiResponse<{ organization_id: number }>, ApiError, string>({
@@ -24,7 +23,7 @@ const useAcceptInvitation = () => {
     onSuccess: (data) => {
       refetchUser()
       toast.success(data.message)
-      router.push(`/${data.data?.organization_id}/dashboard`)
+      queryClient.invalidateQueries({ queryKey: ["invitations"] })
     },
     onError: (error) => {
       if (!error.fieldErrors) {
@@ -39,11 +38,31 @@ const useAcceptInvitation = () => {
   })
 }
 
+const useDeclineInvitation = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation<ApiResponse<null>, ApiError, string>({
+    mutationFn: async (token: string) => {
+      const { data } = await axiosInstance.post(`/v1/org/invitation/reject?token=${token}`)
+      return data
+    },
+    onSuccess: (data) => {
+      toast.success(data.message)
+      queryClient.invalidateQueries({ queryKey: ["invitations"] })
+    },
+    onError: (error) => {
+      if (!error.fieldErrors) {
+        toast.error(error.message)
+      }
+    }
+  })
+}
+
 const useGetVerifyTokenInvitation = (token: string) => {
   return useQuery({
     queryKey: ["verify-token-invitation", token],
     queryFn: async () => {
-      const { data } = await axiosInstance.get<ApiResponse<VerifyTokenInvitationResponse>>(
+      const { data } = await axiosInstance.get<ApiResponse<InvitationData>>(
         `/v1/org/invitation/verify?token=${token}`
       )
       return data
@@ -54,4 +73,4 @@ const useGetVerifyTokenInvitation = (token: string) => {
   })
 }
 
-export { useAcceptInvitation, useGetVerifyTokenInvitation }
+export { useAcceptInvitation, useDeclineInvitation, useGetVerifyTokenInvitation }
