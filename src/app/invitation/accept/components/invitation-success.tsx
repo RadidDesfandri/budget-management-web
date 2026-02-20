@@ -38,6 +38,9 @@ function InvitationSuccess({
     if (!token) return
 
     mutate(token, {
+      onSuccess: (data) => {
+        router.push(`/${data.data?.organization_id}/dashboard`)
+      },
       onError: (error) => {
         if (error.message === "Unauthorized") {
           router.push(`/login?redirect=${pathname}&token=${token}`)

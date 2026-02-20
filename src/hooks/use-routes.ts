@@ -1,7 +1,7 @@
 import { useParams, usePathname } from "next/navigation"
 import { useMemo } from "react"
 import { FaUsers, FaWallet } from "react-icons/fa"
-import { IoIosPaper, IoMdSettings } from "react-icons/io"
+import { IoIosPaper, IoMdMail, IoMdSettings } from "react-icons/io"
 import { MdCategory, MdDashboard, MdHistory } from "react-icons/md"
 import { RiUserSettingsFill } from "react-icons/ri"
 
@@ -41,6 +41,12 @@ const useRoutes = () => {
         name: "Members",
         icon: FaUsers,
         isActive: pathname === `/${organizationId}/members`
+      },
+      {
+        path: `/${organizationId}/invitations`,
+        name: "Invitations",
+        icon: IoMdMail,
+        isActive: pathname === `/${organizationId}/invitations`
       },
       {
         path: `/${organizationId}/activity-logs`,
