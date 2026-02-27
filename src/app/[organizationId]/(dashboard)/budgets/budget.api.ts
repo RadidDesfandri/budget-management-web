@@ -1,9 +1,47 @@
 import axiosInstance from "@/src/lib/axios"
 import { normalizeApiError } from "@/src/lib/utils"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { AddBudgetInput } from "./budget.type"
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { AddBudgetInput, BudgetResponse } from "./budget.type"
 import { toast } from "sonner"
 import { ApiError, ApiResponse } from "@/src/types/api"
+import { QueryParams } from "@/src/types/global"
+
+interface ParamsGetBudget extends Omit<QueryParams, "search"> {
+  organizationId: string
+  period: string
+}
+
+const useGetBudget = ({
+  organizationId,
+  page,
+  page_size,
+  sort_by,
+  order_by,
+  period
+}: ParamsGetBudget) => {
+  return useQuery({
+    queryKey: ["budgets", organizationId, page, page_size, sort_by, order_by, period],
+    queryFn: async () => {
+      const params = new URLSearchParams({
+        page: String((page ?? 0) + 1),
+        page_size: String(page_size),
+        ...(sort_by && { sort_by: sort_by }),
+        ...(order_by && { order_by: order_by }),
+        ...(period && { period })
+      })
+
+      const { data } = await axiosInstance.get<ApiResponse<BudgetResponse>>(
+        `/v1/org/${organizationId}/budget`,
+        { params }
+      )
+
+      return data.data
+    },
+    enabled: !!organizationId,
+    placeholderData: keepPreviousData,
+    refetchOnWindowFocus: false
+  })
+}
 
 const useAddBudget = (organizationId: string) => {
   const queryClient = useQueryClient()
@@ -34,4 +72,4 @@ const useAddBudget = (organizationId: string) => {
   })
 }
 
-export { useAddBudget }
+export { useAddBudget, useGetBudget }
