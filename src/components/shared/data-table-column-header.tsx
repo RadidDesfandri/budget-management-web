@@ -14,7 +14,7 @@ export function DataTableColumnHeader<TData, TValue>({
   className
 }: DataTableColumnHeaderProps<TData, TValue>) {
   if (!column.getCanSort()) {
-    return <div className={cn(className)}>{title}</div>
+    return <div className={cn("uppercase", className)}>{title}</div>
   }
 
   return (
@@ -22,7 +22,7 @@ export function DataTableColumnHeader<TData, TValue>({
       <Button
         variant="ghost"
         size="sm"
-        className="data-[state=open]:bg-accent -ml-3 h-8"
+        className="data-[state=open]:bg-accent -ml-3 h-8 uppercase"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
         <span>{title}</span>

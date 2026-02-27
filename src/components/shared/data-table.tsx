@@ -86,6 +86,9 @@ export interface DataTableProps<TData, TValue> {
 
   // Page size options
   pageSizeOptions?: number[]
+
+  // Additional content
+  additionalContent?: React.ReactNode
 }
 
 export function DataTable<TData, TValue>({
@@ -112,7 +115,8 @@ export function DataTable<TData, TValue>({
   searchPlaceholder = "Search...",
   isLoading = false,
   emptyState,
-  pageSizeOptions = [10, 20, 30, 40, 50]
+  pageSizeOptions = [10, 20, 30, 40, 50],
+  additionalContent
 }: DataTableProps<TData, TValue>) {
   // Local state for client-side operations
   const [localSorting, setLocalSorting] = React.useState<SortingState>([])
@@ -203,6 +207,9 @@ export function DataTable<TData, TValue>({
           )}
         </div>
 
+        {/* Additional Content */}
+        {additionalContent && <div className="ml-auto">{additionalContent}</div>}
+
         {/* Column Visibility */}
         {enableColumnVisibility && (
           <DropdownMenu>
@@ -240,7 +247,7 @@ export function DataTable<TData, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className="px-5">
                       {header.isPlaceholder
                         ? null
                         : flexRender(header.column.columnDef.header, header.getContext())}
@@ -261,7 +268,7 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="px-5">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}

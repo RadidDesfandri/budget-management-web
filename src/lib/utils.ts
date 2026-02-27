@@ -128,6 +128,14 @@ function getExpiresInLabel(expiresAt: string): string | null {
   return `This invitation expires in ${diffHours} hour${diffHours !== 1 ? "s" : ""}`
 }
 
+function formatRupiah(amount: number) {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 2
+  }).format(amount)
+}
+
 export {
   isEmpty,
   cn,
@@ -135,5 +143,6 @@ export {
   normalizeApiError,
   getInitialUsername,
   isExpiringSoon,
-  getExpiresInLabel
+  getExpiresInLabel,
+  formatRupiah
 }
