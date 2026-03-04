@@ -16,11 +16,20 @@ const getOrganization = async (organizationId: string, token?: string) => {
   } catch (error) {
     console.log("Error fetching organization:", error)
     if (error instanceof AxiosError) {
+      if (!error.response) {
+        return {
+          success: false,
+          error: error.message || "Network error or timeout",
+          data: null,
+          statusCode: error.code === "ETIMEDOUT" ? 408 : 503
+        }
+      }
+
       return {
         success: false,
         error: error.response?.data?.message || "Failed to fetch organization data",
         data: null,
-        statusCode: error.response?.status || 500
+        statusCode: error.response.status
       }
     }
 
