@@ -22,6 +22,14 @@ export default async function OrganizationLayout({
 
   if (statusCode === 403) forbidden()
 
+  if (statusCode === 408 || statusCode === 503) {
+    throw new Error("SERVICE_UNAVAILABLE")
+  }
+
+  if (statusCode >= 500) {
+    throw new Error("INTERNAL_SERVER_ERROR")
+  }
+
   if (!data) notFound()
 
   return <OrganizationProvider value={data}>{children}</OrganizationProvider>
