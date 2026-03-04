@@ -16,58 +16,58 @@ const useRoutes = () => {
         path: `/${organizationId}/dashboard`,
         name: "Dashboard",
         icon: MdDashboard,
-        isActive: pathname === `/${organizationId}/dashboard`
+        isActive: pathname.startsWith(`/${organizationId}/dashboard`)
       },
       {
         path: `/${organizationId}/expenses`,
         name: "Expenses",
         icon: IoIosPaper,
-        isActive: pathname === `/${organizationId}/expenses`
+        isActive: pathname.startsWith(`/${organizationId}/expenses`)
       },
       {
         path: `/${organizationId}/budgets`,
         name: "Budgets",
         icon: FaWallet,
-        isActive: pathname === `/${organizationId}/budgets`
+        isActive: pathname.startsWith(`/${organizationId}/budgets`)
       },
       {
         path: `/${organizationId}/categories`,
         name: "Categories",
         icon: MdCategory,
-        isActive: pathname === `/${organizationId}/categories`
+        isActive: pathname.startsWith(`/${organizationId}/categories`)
       },
       {
         path: `/${organizationId}/members`,
         name: "Members",
         icon: FaUsers,
-        isActive: pathname === `/${organizationId}/members`
+        isActive: pathname.startsWith(`/${organizationId}/members`)
       },
       {
         path: `/${organizationId}/invitations`,
         name: "Invitations",
         icon: IoMdMail,
-        isActive: pathname === `/${organizationId}/invitations`
+        isActive: pathname.startsWith(`/${organizationId}/invitations`)
       },
       {
         path: `/${organizationId}/activity-logs`,
         name: "Activity Logs",
         icon: MdHistory,
-        isActive: pathname === `/${organizationId}/activity-logs`
+        isActive: pathname.startsWith(`/${organizationId}/activity-logs`)
       },
       {
         path: `/${organizationId}/organization-settings`,
         name: "Organization Settings",
         icon: IoMdSettings,
-        isActive: pathname === `/${organizationId}/organization-settings`
+        isActive: pathname.startsWith(`/${organizationId}/organization-settings`)
       },
       {
         path: `/${organizationId}/user-settings`,
         name: "User Settings",
         icon: RiUserSettingsFill,
-        isActive: pathname === `/${organizationId}/user-settings`
+        isActive: pathname.startsWith(`/${organizationId}/user-settings`)
       }
     ],
-    [pathname]
+    [pathname, organizationId]
   )
 
   const landingRoutes = useMemo(
