@@ -25,4 +25,11 @@ const createExpenseSchema = z.object({
     )
 })
 
-export { createExpenseSchema }
+const rejectExpenseSchema = z.object({
+  reason: z
+    .string()
+    .min(10, "Rejection reason must be at least 10 characters")
+    .max(500, "Rejection reason must be at most 500 characters")
+})
+
+export { createExpenseSchema, rejectExpenseSchema }

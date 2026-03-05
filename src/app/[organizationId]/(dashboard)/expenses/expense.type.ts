@@ -1,5 +1,7 @@
 import * as z from "zod"
-import { createExpenseSchema } from "./expense.schema"
+import { createExpenseSchema, rejectExpenseSchema } from "./expense.schema"
 
 type CreateExpenseData = z.input<typeof createExpenseSchema>
-export type { CreateExpenseData }
+type RejectExpenseData = z.input<typeof rejectExpenseSchema>
+
+export type { CreateExpenseData, RejectExpenseData }

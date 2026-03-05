@@ -42,6 +42,7 @@ import { format } from "date-fns"
 import { Separator } from "@/src/components/ui/separator"
 import { Textarea } from "@/src/components/ui/textarea"
 import { ReceiptUpload } from "./components/receipt-upload"
+import Link from "next/link"
 
 function CreateExpense() {
   const params = useParams()
@@ -272,10 +273,10 @@ function CreateExpense() {
           <Separator />
 
           <CardFooter className="flex justify-end gap-3">
-            <Button variant="outline" disabled={isCreatingExpense}>
-              Cancel
+            <Button size="lg" asChild type="button" variant="outline" disabled={isCreatingExpense}>
+              <Link href={`/${organizationId}/expenses`}>Cancel</Link>
             </Button>
-            <Button type="submit" disabled={isCreatingExpense}>
+            <Button size="lg" type="submit" disabled={isCreatingExpense}>
               {isCreatingExpense ? "Creating..." : "Create Expense"}
             </Button>
           </CardFooter>
