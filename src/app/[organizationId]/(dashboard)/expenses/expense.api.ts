@@ -120,7 +120,7 @@ const useApproveExpense = (organizationId: string) => {
   return useMutation<ApiResponse<null>, ApiError, number>({
     mutationFn: async (expenseId: number) => {
       try {
-        const { data } = await axiosInstance.patch(
+        const { data } = await axiosInstance.post(
           `/v1/org/${organizationId}/expenses/${expenseId}/approve`
         )
         return data
@@ -148,7 +148,7 @@ const useRejectExpense = (organizationId: string) => {
   >({
     mutationFn: async ({ expenseId, payload }) => {
       try {
-        const { data } = await axiosInstance.patch(
+        const { data } = await axiosInstance.post(
           `/v1/org/${organizationId}/expenses/${expenseId}/reject`,
           payload
         )
