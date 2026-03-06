@@ -40,10 +40,13 @@ import {
   SelectValue
 } from "@/src/components/ui/select"
 import { ChevronDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
+import { cn } from "@/src/lib/utils"
 
 export interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  title?: string
+  titleAction?: React.ReactNode
 
   // Server-side props
   pageCount?: number
@@ -86,6 +89,7 @@ export interface DataTableProps<TData, TValue> {
 
   // Page size options
   pageSizeOptions?: number[]
+  enablePageSizeOptions?: boolean
 
   // Additional content
   additionalContent?: React.ReactNode
@@ -94,6 +98,8 @@ export interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
   data,
+  title,
+  titleAction,
   pageCount,
   totalItems,
   manualPagination = false,
@@ -116,6 +122,7 @@ export function DataTable<TData, TValue>({
   isLoading = false,
   emptyState,
   pageSizeOptions = [10, 20, 30, 40, 50],
+  enablePageSizeOptions = true,
   additionalContent
 }: DataTableProps<TData, TValue>) {
   // Local state for client-side operations
@@ -174,26 +181,28 @@ export function DataTable<TData, TValue>({
     <div className="space-y-4">
       {/* Toolbar */}
       <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center space-x-2">
-          <p className="text-sm font-medium">Rows per page</p>
-          <Select
-            value={`${table.getState().pagination.pageSize}`}
-            onValueChange={(value) => {
-              table.setPageSize(Number(value))
-            }}
-          >
-            <SelectTrigger className="w-17.5 bg-white">
-              <SelectValue placeholder={table.getState().pagination.pageSize} />
-            </SelectTrigger>
-            <SelectContent position="popper">
-              {pageSizeOptions.map((pageSize) => (
-                <SelectItem key={pageSize} value={`${pageSize}`}>
-                  {pageSize}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        {enablePageSizeOptions && (
+          <div className="flex items-center space-x-2">
+            <p className="text-sm font-medium">Rows per page</p>
+            <Select
+              value={`${table.getState().pagination.pageSize}`}
+              onValueChange={(value) => {
+                table.setPageSize(Number(value))
+              }}
+            >
+              <SelectTrigger className="w-17.5 bg-white">
+                <SelectValue placeholder={table.getState().pagination.pageSize} />
+              </SelectTrigger>
+              <SelectContent position="popper">
+                {pageSizeOptions.map((pageSize) => (
+                  <SelectItem key={pageSize} value={`${pageSize}`}>
+                    {pageSize}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
 
         <div className="flex flex-1 items-center gap-2">
           {/* Search Input */}
@@ -241,8 +250,14 @@ export function DataTable<TData, TValue>({
 
       {/* Table */}
       <div className="overflow-x-auto rounded-md border">
+        {(title || titleAction) && (
+          <div className="flex items-center justify-between border-b-2 border-gray-200 bg-white p-4">
+            <h4 className="text-lg font-bold">{title}</h4>
+            {titleAction}
+          </div>
+        )}
         <Table>
-          <TableHeader className="h-14">
+          <TableHeader className={cn("h-14", title && "bg-white")}>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {

@@ -169,4 +169,101 @@ const useRejectExpense = (organizationId: string) => {
   })
 }
 
-export { useCreateExpense, useListExpenses, useApproveExpense, useRejectExpense }
+const useExpenseStats = (_organizationId: string) => {
+  return {
+    success: true,
+    message: "Dashboard stats retrieved successfully",
+    data: {
+      total_expenses: {
+        amount: 120000,
+        percent_change: 12,
+        trend: "up"
+      },
+      pending_approvals: {
+        count: 8
+      },
+      approved_expenses: {
+        count: 142,
+        period: "this_month"
+      },
+      remaining_budget: {
+        amount: 60000,
+        allocated: 180000
+      }
+    },
+    error: null,
+    statusCode: 200
+  }
+  // return useQuery({
+  //   queryKey: ["expense-stats", organizationId],
+  //   queryFn: async () => {
+  //     const { data } = await axiosInstance.get<ApiResponse<ExpenseStats>>(
+  //       `/v1/org/${organizationId}/expenses/stats`
+  //     )
+  //     return data.data
+  //   },
+  //   enabled: !!organizationId,
+  //   refetchOnWindowFocus: false
+  // })
+}
+
+const useExpenseLineChart = (_organizationId: string) => {
+  return {
+    success: true,
+    message: "Expense trend retrieved successfully",
+    data: [
+      { label: "Jan", expenses: 80000, budget: 250000 },
+      { label: "Feb", expenses: 95000, budget: 190000 },
+      { label: "Mar", expenses: 120000, budget: 180000 }
+    ],
+    error: null,
+    statusCode: 200
+  }
+  // return useQuery({
+  //   queryKey: ["expense-line-chart", organizationId],
+  //   queryFn: async () => {
+  //     const { data } = await axiosInstance.get<ApiResponse<ExpenseLineChart>>(
+  //       `/v1/org/${organizationId}/expenses/line-chart`
+  //     )
+  //     return data.data
+  //   },
+  //   enabled: !!organizationId,
+  //   refetchOnWindowFocus: false
+  // })
+}
+
+const useExpensePieChart = (_organizationId: string) => {
+  return {
+    success: true,
+    message: "Expense breakdown retrieved successfully",
+    data: [
+      { label: "Transport", value: 45000 },
+      { label: "Meals", value: 30000 },
+      { label: "Office", value: 25000 },
+      { label: "Other", value: 20000 }
+    ],
+    error: null,
+    statusCode: 200
+  }
+  // return useQuery({
+  //   queryKey: ["expense-pie-chart", organizationId],
+  //   queryFn: async () => {
+  //     const { data } = await axiosInstance.get<ApiResponse<ExpensePieChart>>(
+  //       `/v1/org/${organizationId}/expenses/pie-chart`
+  //     )
+  //     return data.data
+  //   },
+  //   enabled: !!organizationId,
+  //   refetchOnWindowFocus: false
+  // })
+}
+
+export {
+  useCreateExpense,
+  useListExpenses,
+  useApproveExpense,
+  useRejectExpense,
+  useExpenseStats,
+  useExpenseLineChart,
+  useExpensePieChart
+}
