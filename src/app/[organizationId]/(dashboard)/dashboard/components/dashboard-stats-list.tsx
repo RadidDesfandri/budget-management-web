@@ -1,19 +1,25 @@
+import { cn, formatRupiah } from "@/src/lib/utils"
 import {
-  Wallet,
-  TrendingUp,
+  CircleCheck,
   ClipboardClock,
   Clock3,
-  CircleCheck,
   PiggyBank,
-  TrendingDown
+  TrendingDown,
+  TrendingUp,
+  Wallet
 } from "lucide-react"
-import { StatCard } from "./stats-card"
-import { useExpenseStats } from "../../expenses/expense.api"
 import { useMemo } from "react"
-import { cn, formatRupiah } from "@/src/lib/utils"
+import { useExpenseStats } from "../../expenses/expense.api"
+import { StatCard } from "./stats-card"
 
-const DashboardStatsList = ({ organizationId }: { organizationId: string }) => {
-  const { data: statsData } = useExpenseStats(organizationId)
+const DashboardStatsList = ({
+  organizationId,
+  filter
+}: {
+  organizationId: string
+  filter: string
+}) => {
+  const { data: statsData, isLoading } = useExpenseStats(organizationId, filter)
 
   const stats = useMemo(() => {
     const d = statsData

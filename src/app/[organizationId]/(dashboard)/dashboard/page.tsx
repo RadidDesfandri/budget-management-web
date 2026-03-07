@@ -15,6 +15,7 @@ import DashboardFilter from "./components/dashboard-filter"
 import DashboardStatsList from "./components/dashboard-stats-list"
 import { recentExpenseColumn } from "./components/recent-expense-column"
 import { LINE_CHART_SERIES, PIE_COLORS } from "@/src/config/data"
+import { PaginationState } from "@tanstack/react-table"
 
 function DashboardPage() {
   const params = useParams()
@@ -22,11 +23,30 @@ function DashboardPage() {
   const [selectedTimeRange, setSelectedTimeRange] = useState<string>("30d")
   const [date, setDate] = useState<DateRange | undefined>(undefined)
 
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10
+  })
+
+  const dateRange = date
+    ? `${format(date.from!, "yyyy-MM-dd")} - ${format(date.to!, "yyyy-MM-dd")}`
+    : ""
+
+  const filterMap: Record<string, string> = {
+    "7d": "7d",
+    "30d": "30d",
+    last_month: "last_month",
+    custom: dateRange
+  }
+
   const { data, isLoading } = useListExpenses({
     organizationId,
     date_to: format(new Date(), "yyyy-MM-dd"),
     date_from: format(subDays(new Date(), 5), "yyyy-MM-dd"),
-    page_size: 10
+    page_size: pagination.pageSize,
+    page: pagination.pageIndex,
+    sort_by: "created_at",
+    order_by: "desc"
   })
 
   const { data: lineChartData } = useExpenseLineChart(organizationId)
@@ -54,14 +74,14 @@ function DashboardPage() {
         }
       />
 
-      <DashboardStatsList organizationId={organizationId} />
+      <DashboardStatsList organizationId={organizationId} filter={filterMap[selectedTimeRange]} />
 
       <div className="flex w-full flex-col items-center gap-4 md:flex-row">
         <div className="w-full md:w-[60%]">
           <ExpenseLineChart
             title="Montly Expense Trend"
             description="Comparison of expenses and budget"
-            data={lineChartData}
+            data={lineChartData || []}
             series={LINE_CHART_SERIES}
           />
         </div>
@@ -86,6 +106,11 @@ function DashboardPage() {
             <DownloadIcon /> Export
           </Button>
         }
+        manualPagination
+        pageCount={data?.last_page ?? 0}
+        totalItems={data?.total ?? 0}
+        pagination={pagination}
+        onPaginationChange={setPagination}
       />
     </div>
   )
