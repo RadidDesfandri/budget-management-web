@@ -8,7 +8,7 @@ import { DateRange } from "react-day-picker"
 const timeRanges = [
   { value: "7d", label: "7 Days" },
   { value: "30d", label: "This Month" },
-  { value: "60d", label: "Last Month" }
+  { value: "last_month", label: "Last Month" }
 ]
 
 interface DashboardFilterProps {

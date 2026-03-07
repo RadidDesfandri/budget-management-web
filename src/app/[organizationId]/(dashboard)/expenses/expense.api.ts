@@ -1,12 +1,13 @@
 import axiosInstance from "@/src/lib/axios"
 import { normalizeApiError } from "@/src/lib/utils"
 import { ApiError, ApiResponse } from "@/src/types/api"
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { toast } from "sonner"
-import { CreateExpenseData, RejectExpenseData } from "./expense.type"
-import { useRouter } from "next/navigation"
-import { PaginatedResponse, QueryParams } from "@/src/types/global"
 import { ExpenseStatus, ExpenseWithRelations } from "@/src/types/expense"
+import { PaginatedResponse, QueryParams } from "@/src/types/global"
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
+import { LineChartDataPoint } from "../dashboard/components/charts/expense-line-chart"
+import { CreateExpenseData, ExpensePieChart, ExpenseStats, RejectExpenseData } from "./expense.type"
 
 interface ParamsGetExpenses extends QueryParams {
   organizationId: string
@@ -62,8 +63,7 @@ const useListExpenses = ({
       return data.data
     },
     enabled: !!organizationId,
-    placeholderData: keepPreviousData,
-    refetchOnWindowFocus: false
+    placeholderData: keepPreviousData
   })
 }
 
@@ -131,6 +131,9 @@ const useApproveExpense = (organizationId: string) => {
     onSuccess: (data) => {
       toast.success(data.message)
       queryClient.refetchQueries({ queryKey: ["expenses", organizationId] })
+      queryClient.refetchQueries({ queryKey: ["expense-stats", organizationId] })
+      queryClient.refetchQueries({ queryKey: ["expense-line-chart", organizationId] })
+      queryClient.refetchQueries({ queryKey: ["expense-pie-chart", organizationId] })
     },
     onError: (error) => {
       toast.error(error.message)
@@ -169,101 +172,52 @@ const useRejectExpense = (organizationId: string) => {
   })
 }
 
-const useExpenseStats = (_organizationId: string) => {
-  return {
-    success: true,
-    message: "Dashboard stats retrieved successfully",
-    data: {
-      total_expenses: {
-        amount: 120000,
-        percent_change: 12,
-        trend: "up"
-      },
-      pending_approvals: {
-        count: 8
-      },
-      approved_expenses: {
-        count: 142,
-        period: "this_month"
-      },
-      remaining_budget: {
-        amount: 60000,
-        allocated: 180000
-      }
+const useExpenseStats = (organizationId: string, filter: string) => {
+  return useQuery({
+    queryKey: ["expense-stats", organizationId, filter],
+    queryFn: async () => {
+      const { data } = await axiosInstance.get<ApiResponse<ExpenseStats>>(
+        `/v1/org/${organizationId}/expenses/stats?filter=${filter}`
+      )
+      return data.data
     },
-    error: null,
-    statusCode: 200
-  }
-  // return useQuery({
-  //   queryKey: ["expense-stats", organizationId],
-  //   queryFn: async () => {
-  //     const { data } = await axiosInstance.get<ApiResponse<ExpenseStats>>(
-  //       `/v1/org/${organizationId}/expenses/stats`
-  //     )
-  //     return data.data
-  //   },
-  //   enabled: !!organizationId,
-  //   refetchOnWindowFocus: false
-  // })
+    enabled: !!organizationId,
+    placeholderData: keepPreviousData
+  })
 }
 
-const useExpenseLineChart = (_organizationId: string) => {
-  return {
-    success: true,
-    message: "Expense trend retrieved successfully",
-    data: [
-      { label: "Jan", expenses: 80000, budget: 250000 },
-      { label: "Feb", expenses: 95000, budget: 190000 },
-      { label: "Mar", expenses: 120000, budget: 180000 }
-    ],
-    error: null,
-    statusCode: 200
-  }
-  // return useQuery({
-  //   queryKey: ["expense-line-chart", organizationId],
-  //   queryFn: async () => {
-  //     const { data } = await axiosInstance.get<ApiResponse<ExpenseLineChart>>(
-  //       `/v1/org/${organizationId}/expenses/line-chart`
-  //     )
-  //     return data.data
-  //   },
-  //   enabled: !!organizationId,
-  //   refetchOnWindowFocus: false
-  // })
+const useExpenseLineChart = (organizationId: string) => {
+  return useQuery({
+    queryKey: ["expense-line-chart", organizationId],
+    queryFn: async () => {
+      const { data } = await axiosInstance.get<ApiResponse<LineChartDataPoint[]>>(
+        `/v1/org/${organizationId}/expenses/line-chart`
+      )
+      return data.data
+    },
+    enabled: !!organizationId
+  })
 }
 
-const useExpensePieChart = (_organizationId: string) => {
-  return {
-    success: true,
-    message: "Expense breakdown retrieved successfully",
-    data: [
-      { label: "Transport", value: 45000 },
-      { label: "Meals", value: 30000 },
-      { label: "Office", value: 25000 },
-      { label: "Other", value: 20000 }
-    ],
-    error: null,
-    statusCode: 200
-  }
-  // return useQuery({
-  //   queryKey: ["expense-pie-chart", organizationId],
-  //   queryFn: async () => {
-  //     const { data } = await axiosInstance.get<ApiResponse<ExpensePieChart>>(
-  //       `/v1/org/${organizationId}/expenses/pie-chart`
-  //     )
-  //     return data.data
-  //   },
-  //   enabled: !!organizationId,
-  //   refetchOnWindowFocus: false
-  // })
+const useExpensePieChart = (organizationId: string) => {
+  return useQuery({
+    queryKey: ["expense-pie-chart", organizationId],
+    queryFn: async () => {
+      const { data } = await axiosInstance.get<ApiResponse<ExpensePieChart[]>>(
+        `/v1/org/${organizationId}/expenses/pie-chart`
+      )
+      return data.data
+    },
+    enabled: !!organizationId
+  })
 }
 
 export {
-  useCreateExpense,
-  useListExpenses,
   useApproveExpense,
-  useRejectExpense,
-  useExpenseStats,
+  useCreateExpense,
   useExpenseLineChart,
-  useExpensePieChart
+  useExpensePieChart,
+  useExpenseStats,
+  useListExpenses,
+  useRejectExpense
 }

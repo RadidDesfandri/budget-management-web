@@ -7,11 +7,11 @@ import { ExpenseStatusCell } from "../../expenses/components/expense-status-cell
 
 export const recentExpenseColumn: ColumnDef<ExpenseWithRelations>[] = [
   {
-    accessorKey: "expense_date",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Date" />,
+    accessorKey: "created_at",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Created Date" />,
     cell: ({ row }) => {
-      const { expense_date } = row.original
-      return <span>{format(expense_date, "MMM dd, yyyy")}</span>
+      const { created_at } = row.original
+      return <span>{format(created_at, "MMM dd, yyyy")}</span>
     },
     enableSorting: false
   },
