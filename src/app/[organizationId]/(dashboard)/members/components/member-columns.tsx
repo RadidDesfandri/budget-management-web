@@ -1,7 +1,6 @@
 "use client"
 
 import { DataTableColumnHeader } from "@/src/components/shared/data-table-column-header"
-import { DataTableRowActions } from "@/src/components/shared/data-table-row-actions"
 import RoleBadge from "@/src/components/shared/role-badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar"
 import { Checkbox } from "@/src/components/ui/checkbox"
@@ -87,28 +86,28 @@ export const memberColumns: ColumnDef<MemberData>[] = [
         </div>
       )
     }
-  },
-  {
-    id: "actions",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Actions" />,
-    cell: ({ row }) => (
-      <DataTableRowActions
-        row={row}
-        onEdit={(data) => {
-          console.log("Edit:", data)
-          // Implementasi edit logic
-        }}
-        onDelete={(data) => {
-          console.log("Delete:", data)
-          // Implementasi delete logic
-        }}
-        onCopy={(data) => {
-          navigator.clipboard.writeText(data.id.toString())
-          // Toast notification
-        }}
-      />
-    ),
-    enableHiding: false,
-    enableSorting: false
   }
+  // {
+  //   id: "actions",
+  //   header: ({ column }) => <DataTableColumnHeader column={column} title="Actions" />,
+  //   cell: ({ row }) => (
+  //     <DataTableRowActions
+  //       row={row}
+  //       onEdit={(data) => {
+  //         console.log("Edit:", data)
+  //         // Implementasi edit logic
+  //       }}
+  //       onDelete={(data) => {
+  //         console.log("Delete:", data)
+  //         // Implementasi delete logic
+  //       }}
+  //       onCopy={(data) => {
+  //         navigator.clipboard.writeText(data.id.toString())
+  //         // Toast notification
+  //       }}
+  //     />
+  //   ),
+  //   enableHiding: false,
+  //   enableSorting: false
+  // }
 ]

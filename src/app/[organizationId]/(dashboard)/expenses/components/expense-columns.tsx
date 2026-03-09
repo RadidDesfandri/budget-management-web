@@ -1,12 +1,37 @@
 import { DataTableColumnHeader } from "@/src/components/shared/data-table-column-header"
-import { DataTableRowActions } from "@/src/components/shared/data-table-row-actions"
+import { ActionItem, DataTableRowActions } from "@/src/components/shared/data-table-row-actions"
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar"
 import { formatRupiah, getInitialUsername } from "@/src/lib/utils"
 import { ExpenseWithRelations } from "@/src/types/expense"
 import { ColumnDef } from "@tanstack/react-table"
 import { format } from "date-fns"
+import { Edit, Eye, Trash } from "lucide-react"
 import CategoryIcon from "../../categories/components/category-icon"
 import { ExpenseStatusCell } from "./expense-status-cell"
+import { ExpenseDetailDrawer } from "./expense-detail-drawer"
+import { ExpenseDeleteDialog } from "./expense-delete-dialog"
+
+export const expenseActions: ActionItem<ExpenseWithRelations>[] = [
+  {
+    label: "Detail",
+    icon: <Eye className="h-4 w-4" />,
+    render: (data, trigger) => <ExpenseDetailDrawer expense={data} trigger={trigger} />
+  },
+  {
+    label: "Edit",
+    icon: <Edit className="h-4 w-4" />,
+    onClick: (data) => {
+      window.location.href = `/${data.organization_id}/expense/edit/${data.id}`
+    }
+  },
+  {
+    label: "Delete",
+    icon: <Trash className="h-4 w-4" />,
+    variant: "destructive",
+    separator: "before",
+    render: (data, trigger) => <ExpenseDeleteDialog expense={data} trigger={trigger} />
+  }
+]
 
 export const expenseColumns: ColumnDef<ExpenseWithRelations>[] = [
   {
@@ -78,19 +103,7 @@ export const expenseColumns: ColumnDef<ExpenseWithRelations>[] = [
   {
     id: "actions",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Actions" />,
-    cell: ({ row }) => (
-      <DataTableRowActions
-        row={row}
-        onEdit={(data) => {
-          console.log("Edit:", data)
-          // Implementasi edit logic
-        }}
-        onDelete={(data) => {
-          console.log("Delete:", data)
-          // Implementasi delete logic
-        }}
-      />
-    ),
+    cell: ({ row }) => <DataTableRowActions row={row} actions={expenseActions} />,
     enableSorting: false
   }
 ]

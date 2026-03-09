@@ -1,7 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { Category } from "../category.type"
 import { DataTableColumnHeader } from "@/src/components/shared/data-table-column-header"
-import { DataTableRowActions } from "@/src/components/shared/data-table-row-actions"
 import { Badge } from "@/src/components/ui/badge"
 import CategoryIcon from "./category-icon"
 
@@ -62,24 +61,24 @@ export const categoryColumns: ColumnDef<Category>[] = [
     },
     enableSorting: false,
     enableHiding: false
-  },
-  {
-    id: "actions",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Actions" />,
-    cell: ({ row }) => (
-      <DataTableRowActions
-        row={row}
-        onEdit={(data) => {
-          console.log("Edit:", data)
-          // Implementasi edit logic
-        }}
-        onDelete={(data) => {
-          console.log("Delete:", data)
-          // Implementasi delete logic
-        }}
-      />
-    ),
-    enableHiding: false,
-    enableSorting: false
   }
+  // {
+  //   id: "actions",
+  //   header: ({ column }) => <DataTableColumnHeader column={column} title="Actions" />,
+  //   cell: ({ row }) => (
+  //     <DataTableRowActions
+  //       row={row}
+  //       onEdit={(data) => {
+  //         console.log("Edit:", data)
+  //         // Implementasi edit logic
+  //       }}
+  //       onDelete={(data) => {
+  //         console.log("Delete:", data)
+  //         // Implementasi delete logic
+  //       }}
+  //     />
+  //   ),
+  //   enableHiding: false,
+  //   enableSorting: false
+  // }
 ]

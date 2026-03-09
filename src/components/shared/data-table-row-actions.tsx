@@ -1,5 +1,7 @@
+"use client"
+
 import { Row } from "@tanstack/react-table"
-import { MoreHorizontal, Copy, Edit, Trash } from "lucide-react"
+import { MoreHorizontal } from "lucide-react"
 import { Button } from "@/src/components/ui/button"
 import {
   DropdownMenu,
@@ -10,27 +12,29 @@ import {
   DropdownMenuTrigger
 } from "@/src/components/ui/dropdown-menu"
 
+export interface ActionItem<TData> {
+  label: string
+  icon?: React.ReactNode
+  render?: (data: TData, trigger: React.ReactNode) => React.ReactNode
+  onClick?: (data: TData) => void
+  variant?: "default" | "destructive"
+  separator?: "before" | "after"
+  hidden?: (data: TData) => boolean
+}
+
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>
-  onEdit?: (data: TData) => void
-  onDelete?: (data: TData) => void
-  onCopy?: (data: TData) => void
-  customActions?: {
-    label: string
-    icon?: React.ReactNode
-    onClick: (data: TData) => void
-    variant?: "default" | "destructive"
-  }[]
+  actions: ActionItem<TData>[]
+  label?: string
 }
 
 export function DataTableRowActions<TData>({
   row,
-  onEdit,
-  onDelete,
-  onCopy,
-  customActions
+  actions,
+  label = "Actions"
 }: DataTableRowActionsProps<TData>) {
   const data = row.original
+  const visibleActions = actions.filter((action) => !action.hidden?.(data))
 
   return (
     <DropdownMenu>
@@ -41,43 +45,30 @@ export function DataTableRowActions<TData>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-40">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+        <DropdownMenuLabel>{label}</DropdownMenuLabel>
         <DropdownMenuSeparator />
 
-        {onCopy && (
-          <DropdownMenuItem onClick={() => onCopy(data)}>
-            <Copy className="mr-2 h-4 w-4" />
-            Copy
-          </DropdownMenuItem>
-        )}
-
-        {onEdit && (
-          <DropdownMenuItem onClick={() => onEdit(data)}>
-            <Edit className="mr-2 h-4 w-4" />
-            Edit
-          </DropdownMenuItem>
-        )}
-
-        {customActions?.map((action, index) => (
-          <DropdownMenuItem
-            key={index}
-            onClick={() => action.onClick(data)}
-            className={action.variant === "destructive" ? "text-destructive" : ""}
-          >
-            {action.icon && <span className="mr-2">{action.icon}</span>}
-            {action.label}
-          </DropdownMenuItem>
-        ))}
-
-        {onDelete && (
-          <>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => onDelete(data)} className="text-destructive">
-              <Trash className="mr-2 h-4 w-4" />
-              Delete
+        {visibleActions.map((action, index) => {
+          const triggerElement = (
+            <DropdownMenuItem
+              key={index}
+              onClick={action.onClick ? () => action.onClick!(data) : undefined}
+              className={action.variant === "destructive" ? "text-destructive" : ""}
+              onSelect={action.render ? (e) => e.preventDefault() : undefined}
+            >
+              {action.icon && <span className="mr-2 h-4 w-4">{action.icon}</span>}
+              {action.label}
             </DropdownMenuItem>
-          </>
-        )}
+          )
+
+          return (
+            <span key={index}>
+              {action.separator === "before" && <DropdownMenuSeparator />}
+              {action.render ? action.render(data, triggerElement) : triggerElement}
+              {action.separator === "after" && <DropdownMenuSeparator />}
+            </span>
+          )
+        })}
       </DropdownMenuContent>
     </DropdownMenu>
   )

@@ -3,7 +3,6 @@ import { formatRupiah } from "@/src/lib/utils"
 import { ColumnDef } from "@tanstack/react-table"
 import CategoryIcon from "../../categories/components/category-icon"
 import { BudgetData } from "../budget.type"
-import { DataTableRowActions } from "@/src/components/shared/data-table-row-actions"
 
 export const budgetColumns: ColumnDef<BudgetData>[] = [
   {
@@ -78,23 +77,23 @@ export const budgetColumns: ColumnDef<BudgetData>[] = [
       )
     },
     enableSorting: false
-  },
-  {
-    id: "actions",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Actions" />,
-    cell: ({ row }) => (
-      <DataTableRowActions
-        row={row}
-        onEdit={(data) => {
-          console.log("Edit:", data)
-          // Implementasi edit logic
-        }}
-        onDelete={(data) => {
-          console.log("Delete:", data)
-          // Implementasi delete logic
-        }}
-      />
-    ),
-    enableSorting: false
   }
+  // {
+  //   id: "actions",
+  //   header: ({ column }) => <DataTableColumnHeader column={column} title="Actions" />,
+  //   cell: ({ row }) => (
+  //     <DataTableRowActions
+  //       row={row}
+  //       onEdit={(data) => {
+  //         console.log("Edit:", data)
+  //         // Implementasi edit logic
+  //       }}
+  //       onDelete={(data) => {
+  //         console.log("Delete:", data)
+  //         // Implementasi delete logic
+  //       }}
+  //     />
+  //   ),
+  //   enableSorting: false
+  // }
 ]

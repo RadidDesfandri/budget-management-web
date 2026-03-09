@@ -86,24 +86,24 @@ export const invitationHistoryColumns: ColumnDef<InvitationData>[] = [
     },
     enableHiding: false,
     enableSorting: false
-  },
-  {
-    accessorKey: "updated_at",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Date" />,
-    cell: ({ row }) => {
-      const updatedAt = row.getValue("updated_at")
-
-      return (
-        <div className="text-muted-foreground">
-          {new Date(String(updatedAt)).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric"
-          })}
-        </div>
-      )
-    },
-    enableHiding: false,
-    enableSorting: false
   }
+  // {
+  //   accessorKey: "updated_at",
+  //   header: ({ column }) => <DataTableColumnHeader column={column} title="Date" />,
+  //   cell: ({ row }) => {
+  //     const updatedAt = row.getValue("updated_at")
+
+  //     return (
+  //       <div className="text-muted-foreground">
+  //         {new Date(String(updatedAt)).toLocaleDateString("en-US", {
+  //           month: "short",
+  //           day: "numeric",
+  //           year: "numeric"
+  //         })}
+  //       </div>
+  //     )
+  //   },
+  //   enableHiding: false,
+  //   enableSorting: false
+  // }
 ]

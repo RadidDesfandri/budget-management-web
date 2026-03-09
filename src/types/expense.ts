@@ -20,6 +20,7 @@ interface Expense {
 }
 
 interface ExpenseWithRelations extends Expense {
+  organization_id: number
   category: Omit<Category, "organization_id" | "created_at" | "updated_at">
   user: Pick<User, "id" | "name" | "avatar_url" | "full_avatar_url">
 }
