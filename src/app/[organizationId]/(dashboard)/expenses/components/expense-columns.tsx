@@ -7,9 +7,9 @@ import { ColumnDef } from "@tanstack/react-table"
 import { format } from "date-fns"
 import { Edit, Eye, Trash } from "lucide-react"
 import CategoryIcon from "../../categories/components/category-icon"
-import { ExpenseStatusCell } from "./expense-status-cell"
-import { ExpenseDetailDrawer } from "./expense-detail-drawer"
 import { ExpenseDeleteDialog } from "./expense-delete-dialog"
+import { ExpenseDetailDrawer } from "./expense-detail-drawer"
+import { ExpenseStatusCell } from "./expense-status-cell"
 
 export const expenseActions: ActionItem<ExpenseWithRelations>[] = [
   {
@@ -21,15 +21,17 @@ export const expenseActions: ActionItem<ExpenseWithRelations>[] = [
     label: "Edit",
     icon: <Edit className="h-4 w-4" />,
     onClick: (data) => {
-      window.location.href = `/${data.organization_id}/expense/edit/${data.id}`
-    }
+      window.location.href = `/${data.organization_id}/expenses/edit/${data.id}`
+    },
+    hidden: (data) => data.status !== "pending"
   },
   {
     label: "Delete",
     icon: <Trash className="h-4 w-4" />,
     variant: "destructive",
     separator: "before",
-    render: (data, trigger) => <ExpenseDeleteDialog expense={data} trigger={trigger} />
+    render: (data, trigger) => <ExpenseDeleteDialog expense={data} trigger={trigger} />,
+    hidden: (data) => data.status === "approved"
   }
 ]
 
