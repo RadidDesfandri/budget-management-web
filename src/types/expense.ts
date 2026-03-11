@@ -27,4 +27,6 @@ interface ExpenseWithRelations extends Expense {
 
 type ExpenseStatus = "pending" | "approved" | "rejected"
 
-export type { Expense, ExpenseStatus, ExpenseWithRelations }
+type RecentExpense = Pick<Expense, "id" | "title" | "amount" | "expense_date">
+
+export type { Expense, ExpenseStatus, ExpenseWithRelations, RecentExpense }

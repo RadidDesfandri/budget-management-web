@@ -72,4 +72,63 @@ const useAddBudget = (organizationId: string) => {
   })
 }
 
-export { useAddBudget, useGetBudget }
+const useEditBudget = (organizationId: string, budgetId: number) => {
+  const queryClient = useQueryClient()
+
+  return useMutation<ApiResponse<null>, ApiError, AddBudgetInput>({
+    mutationFn: async (payload: AddBudgetInput) => {
+      try {
+        const { data } = await axiosInstance.put(
+          `/v1/org/${organizationId}/budget/update/${budgetId}`,
+          {
+            ...payload,
+            month: `${payload.month.year}-${String(payload.month.month + 1).padStart(2, "0")}`,
+            amount: payload.amount
+          }
+        )
+
+        return data
+      } catch (error) {
+        throw normalizeApiError(error)
+      }
+    },
+    onSuccess: (data) => {
+      toast.success(data.message)
+      queryClient.invalidateQueries({ queryKey: ["budgets", organizationId] })
+    },
+    onError: (error) => {
+      if (!error.fieldErrors) {
+        toast.error(error.message)
+      }
+    }
+  })
+}
+
+const useDeleteBudget = (organizationId: string) => {
+  const queryClient = useQueryClient()
+
+  return useMutation<ApiResponse<null>, ApiError, number>({
+    mutationFn: async (budgetId: number) => {
+      try {
+        const { data } = await axiosInstance.delete(
+          `/v1/org/${organizationId}/budget/delete/${budgetId}`
+        )
+
+        return data
+      } catch (error) {
+        throw normalizeApiError(error)
+      }
+    },
+    onSuccess: (data) => {
+      toast.success(data.message)
+      queryClient.invalidateQueries({ queryKey: ["budgets", organizationId] })
+    },
+    onError: (error) => {
+      if (!error.fieldErrors) {
+        toast.error(error.message)
+      }
+    }
+  })
+}
+
+export { useAddBudget, useGetBudget, useDeleteBudget, useEditBudget }
