@@ -4,7 +4,7 @@ import { User } from "./user"
 interface Expense {
   id: number
   title: string
-  description: string
+  description: string | null
   amount: number
   expense_date: string
   status: ExpenseStatus
@@ -19,10 +19,14 @@ interface Expense {
   updated_at: string
 }
 
+type SelectedUser = Pick<User, "id" | "name" | "avatar_url" | "full_avatar_url">
+
 interface ExpenseWithRelations extends Expense {
   organization_id: number
   category: Omit<Category, "organization_id" | "created_at" | "updated_at">
-  user: Pick<User, "id" | "name" | "avatar_url" | "full_avatar_url">
+  user: SelectedUser
+  approved_by: SelectedUser | null
+  rejected_by: SelectedUser | null
 }
 
 type ExpenseStatus = "pending" | "approved" | "rejected"

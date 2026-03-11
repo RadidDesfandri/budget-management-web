@@ -67,6 +67,28 @@ const useListExpenses = ({
   })
 }
 
+const useGetExpenseDetail = ({
+  organizationId,
+  expenseId
+}: {
+  organizationId: string
+  expenseId: number
+}) => {
+  return useQuery({
+    queryKey: ["expense", organizationId, expenseId],
+    queryFn: async () => {
+      const { data } = await axiosInstance.get<ApiResponse<ExpenseWithRelations>>(
+        `/v1/org/${organizationId}/expenses/${expenseId}`
+      )
+
+      return data.data
+    },
+    enabled: !!organizationId,
+    placeholderData: keepPreviousData,
+    refetchOnWindowFocus: false
+  })
+}
+
 const useCreateExpense = (organizationId: string) => {
   const queryClient = useQueryClient()
   const router = useRouter()
@@ -78,9 +100,12 @@ const useCreateExpense = (organizationId: string) => {
 
         formData.append("title", payload.title)
         formData.append("amount", payload.amount.toString())
-        formData.append("description", payload.description)
         formData.append("category_id", payload.category_id.toString())
         formData.append("expense_date", payload.expense_date)
+
+        if (payload.description) {
+          formData.append("description", payload.description)
+        }
 
         if (payload.receipt) {
           formData.append("receipt", payload.receipt)
@@ -110,6 +135,50 @@ const useCreateExpense = (organizationId: string) => {
       if (!error.fieldErrors) {
         toast.error(error.message)
       }
+    }
+  })
+}
+
+const useEditExpense = (organizationId: string, expenseId: number) => {
+  const queryClient = useQueryClient()
+  const router = useRouter()
+
+  return useMutation<ApiResponse<null>, ApiError, CreateExpenseData>({
+    mutationFn: async (payload: CreateExpenseData) => {
+      try {
+        const formData = new FormData()
+        formData.append("title", payload.title)
+        formData.append("amount", payload.amount.toString())
+        formData.append("category_id", payload.category_id.toString())
+        formData.append("expense_date", payload.expense_date)
+
+        if (payload.description) {
+          formData.append("description", payload.description)
+        }
+
+        if (payload.receipt) {
+          formData.append("receipt", payload.receipt)
+        }
+
+        const { data } = await axiosInstance.put(
+          `/v1/org/${organizationId}/expenses/update/${expenseId}`,
+          formData,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        )
+
+        return data
+      } catch (err) {
+        throw normalizeApiError(err)
+      }
+    },
+    onSuccess: (data) => {
+      toast.success(data.message)
+      queryClient.refetchQueries({ queryKey: ["expenses", organizationId] })
+      queryClient.refetchQueries({ queryKey: ["expense", organizationId, expenseId] })
+      router.push(`/${organizationId}/expenses`)
+    },
+    onError: (error) => {
+      if (!error.fieldErrors) toast.error(error.message)
     }
   })
 }
@@ -212,6 +281,32 @@ const useExpensePieChart = (organizationId: string) => {
   })
 }
 
+const useDeleteExpense = (organizationId: string) => {
+  const queryClient = useQueryClient()
+
+  return useMutation<ApiResponse<null>, ApiError, number>({
+    mutationFn: async (expenseId: number) => {
+      try {
+        const { data } = await axiosInstance.delete(
+          `/v1/org/${organizationId}/expenses/delete/${expenseId}`
+        )
+        return data
+      } catch (err) {
+        throw normalizeApiError(err)
+      }
+    },
+    onSuccess: (data) => {
+      toast.success(data.message)
+      queryClient.refetchQueries({ queryKey: ["expenses", organizationId] })
+    },
+    onError: (error) => {
+      if (!error.fieldErrors) {
+        toast.error(error.message)
+      }
+    }
+  })
+}
+
 export {
   useApproveExpense,
   useCreateExpense,
@@ -219,5 +314,8 @@ export {
   useExpensePieChart,
   useExpenseStats,
   useListExpenses,
-  useRejectExpense
+  useRejectExpense,
+  useDeleteExpense,
+  useGetExpenseDetail,
+  useEditExpense
 }

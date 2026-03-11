@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useController, type Control, type FieldPath, type FieldValues } from "react-hook-form"
 import { FileText, ImageIcon, Paperclip, Trash2, UploadCloud } from "lucide-react"
 import { cn } from "@/src/lib/utils"
@@ -12,6 +12,7 @@ interface ReceiptUploadProps<T extends FieldValues> {
   label?: string
   disabled?: boolean
   options?: UseFileUploadOptions
+  existingReceiptUrl?: string
 }
 
 export function ReceiptUpload<T extends FieldValues>({
@@ -19,9 +20,11 @@ export function ReceiptUpload<T extends FieldValues>({
   name,
   label = "Receipt",
   disabled = false,
-  options
+  options,
+  existingReceiptUrl
 }: ReceiptUploadProps<T>) {
   const { field } = useController({ control, name })
+  const [existingRemoved, setExistingRemoved] = useState(false)
 
   const {
     file,
@@ -47,6 +50,23 @@ export function ReceiptUpload<T extends FieldValues>({
   const acceptString =
     options?.accept?.join(",") ?? "image/jpeg,image/jpg,image/png,image/webp,application/pdf"
 
+  const hasExisting = !!existingReceiptUrl && !existingRemoved
+  const displayFile = file
+  const showDropzone = !displayFile && !hasExisting
+
+  const displayPreview = preview ?? (hasExisting ? existingReceiptUrl : undefined)
+  const isExistingPdf = hasExisting && !displayFile && existingReceiptUrl?.endsWith(".pdf")
+  const showImagePreview = (isImage && preview) || (hasExisting && !displayFile && !isExistingPdf)
+
+  function handleRemove() {
+    if (displayFile) {
+      clearFile()
+    } else if (hasExisting) {
+      setExistingRemoved(true)
+      field.onChange(undefined)
+    }
+  }
+
   return (
     <FormItem>
       <FormLabel>{label}</FormLabel>
@@ -60,7 +80,7 @@ export function ReceiptUpload<T extends FieldValues>({
         onChange={handleInputChange}
       />
 
-      {!file ? (
+      {showDropzone ? (
         <div
           role="button"
           tabIndex={0}
@@ -94,24 +114,27 @@ export function ReceiptUpload<T extends FieldValues>({
         </div>
       ) : (
         <div className="border-input rounded-md border">
-          {isImage && preview ? (
+          {showImagePreview && displayPreview ? (
             <div className="relative">
               <img
-                src={preview}
+                src={displayPreview}
                 alt="Receipt preview"
                 className="h-48 w-full rounded-t-md object-cover"
               />
             </div>
           ) : (
             <div className="bg-muted/40 flex items-center gap-3 rounded-t-md px-4 py-3">
-              {isPdf ? (
+              {isPdf || isExistingPdf ? (
                 <FileText className="text-destructive size-8 shrink-0" />
               ) : (
                 <ImageIcon className="text-primary size-8 shrink-0" />
               )}
+
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium">{file.name}</p>
-                <p className="text-muted-foreground text-xs">{fileSizeLabel}</p>
+                <p className="truncate text-sm font-medium">
+                  {displayFile?.name ?? existingReceiptUrl?.split("/").pop()}
+                </p>
+                {fileSizeLabel && <p className="text-muted-foreground text-xs">{fileSizeLabel}</p>}
               </div>
             </div>
           )}
@@ -119,8 +142,12 @@ export function ReceiptUpload<T extends FieldValues>({
           <div className="flex items-center justify-between gap-2 rounded-b-md px-3 py-2">
             <div className="flex min-w-0 items-center gap-2">
               <Paperclip className="text-muted-foreground size-3.5 shrink-0" />
-              <span className="text-muted-foreground truncate text-xs">{file.name}</span>
-              <span className="text-muted-foreground text-xs">· {fileSizeLabel}</span>
+              <span className="text-muted-foreground truncate text-xs">
+                {displayFile?.name ?? existingReceiptUrl?.split("/").pop()}
+              </span>
+              {fileSizeLabel && (
+                <span className="text-muted-foreground text-xs">· {fileSizeLabel}</span>
+              )}
             </div>
             <Button
               type="button"
@@ -128,7 +155,7 @@ export function ReceiptUpload<T extends FieldValues>({
               size="icon"
               className="text-destructive hover:text-destructive size-7 shrink-0"
               disabled={disabled}
-              onClick={clearFile}
+              onClick={handleRemove}
               aria-label="Remove file"
             >
               <Trash2 className="size-4" />
