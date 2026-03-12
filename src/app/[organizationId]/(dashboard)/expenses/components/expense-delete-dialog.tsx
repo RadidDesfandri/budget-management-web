@@ -12,6 +12,7 @@ import {
   DialogTrigger
 } from "@/src/components/ui/dialog"
 import { ExpenseWithRelations } from "@/src/types/expense"
+import { useDeleteExpense } from "../expense.api"
 
 interface ExpenseDeleteDialogProps {
   expense: ExpenseWithRelations
@@ -19,6 +20,8 @@ interface ExpenseDeleteDialogProps {
 }
 
 export function ExpenseDeleteDialog({ expense, trigger }: ExpenseDeleteDialogProps) {
+  const { mutate: deleteExpense, isPending } = useDeleteExpense(String(expense.organization_id))
+
   return (
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
@@ -34,7 +37,13 @@ export function ExpenseDeleteDialog({ expense, trigger }: ExpenseDeleteDialogPro
           <DialogClose asChild>
             <Button variant="outline">Cancel</Button>
           </DialogClose>
-          <Button variant="destructive">Delete</Button>
+          <Button
+            variant="destructive"
+            onClick={() => deleteExpense(expense.id)}
+            disabled={isPending}
+          >
+            {isPending ? "Deleting..." : "Delete"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

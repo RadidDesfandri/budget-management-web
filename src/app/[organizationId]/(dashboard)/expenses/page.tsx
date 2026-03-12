@@ -38,7 +38,7 @@ function ExpensesPage() {
   const debounceSearch = useDebounceValue(searchValue, 500)
 
   const sortBy = sorting[0]?.id
-  const sortOrder = sorting[0]?.desc ? "desc" : "asc"
+  const sortOrder = sorting[0]?.desc ? "asc" : "desc"
 
   const { data, isLoading } = useListExpenses({
     organizationId,
