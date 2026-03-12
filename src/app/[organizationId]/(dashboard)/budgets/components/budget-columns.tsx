@@ -3,6 +3,46 @@ import { formatRupiah } from "@/src/lib/utils"
 import { ColumnDef } from "@tanstack/react-table"
 import CategoryIcon from "../../categories/components/category-icon"
 import { BudgetData } from "../budget.type"
+import { ActionItem, DataTableRowActions } from "@/src/components/shared/data-table-row-actions"
+import { Edit, Eye, Trash } from "lucide-react"
+import DeleteBudgetDialog from "./delete-budget-dialog"
+import { usePermission } from "@/src/hooks/use-permission"
+import EditBudget from "./edit-budget"
+import DetailBudget from "./detail-budget"
+import { RecentExpense } from "@/src/types/expense"
+import { format } from "date-fns"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/src/components/ui/tooltip"
+import { getStatus } from "./budget-status-badge"
+
+export const budgetActions: ActionItem<BudgetData>[] = [
+  {
+    label: "Detail",
+    icon: <Eye className="h-4 w-4" />,
+    render: (data, trigger) => <DetailBudget budget={data} trigger={trigger} />
+  },
+  {
+    label: "Edit",
+    icon: <Edit className="h-4 w-4" />,
+    render: (data, trigger) => <EditBudget budget={data} trigger={trigger} />,
+    hidden() {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const { can } = usePermission()
+      return !can("budget:edit")
+    }
+  },
+  {
+    label: "Delete",
+    icon: <Trash className="h-4 w-4" />,
+    variant: "destructive",
+    separator: "before",
+    render: (data, trigger) => <DeleteBudgetDialog budget={data} trigger={trigger} />,
+    hidden() {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const { can } = usePermission()
+      return !can("budget:delete")
+    }
+  }
+]
 
 export const budgetColumns: ColumnDef<BudgetData>[] = [
   {
@@ -56,12 +96,6 @@ export const budgetColumns: ColumnDef<BudgetData>[] = [
       const percentage = budgetNum > 0 ? Math.min((used / budgetNum) * 100, 100) : 0
       const rounded = Math.round(percentage)
 
-      const getStatus = (pct: number) => {
-        if (pct <= 75) return { label: "On Track", color: "bg-emerald-500" }
-        if (pct <= 90) return { label: "Near Limit", color: "bg-amber-400" }
-        return { label: "Over Budget", color: "bg-red-500" }
-      }
-
       const { color } = getStatus(rounded)
 
       return (
@@ -77,23 +111,50 @@ export const budgetColumns: ColumnDef<BudgetData>[] = [
       )
     },
     enableSorting: false
+  },
+  {
+    id: "actions",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Actions" />,
+    cell: ({ row }) => <DataTableRowActions row={row} actions={budgetActions} />,
+    enableSorting: false
   }
-  // {
-  //   id: "actions",
-  //   header: ({ column }) => <DataTableColumnHeader column={column} title="Actions" />,
-  //   cell: ({ row }) => (
-  //     <DataTableRowActions
-  //       row={row}
-  //       onEdit={(data) => {
-  //         console.log("Edit:", data)
-  //         // Implementasi edit logic
-  //       }}
-  //       onDelete={(data) => {
-  //         console.log("Delete:", data)
-  //         // Implementasi delete logic
-  //       }}
-  //     />
-  //   ),
-  //   enableSorting: false
-  // }
+]
+
+export const recentExpenseBudgets: ColumnDef<RecentExpense>[] = [
+  {
+    accessorKey: "expense_date",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Date" />,
+    cell: ({ row }) => {
+      const { expense_date } = row.original
+      return <span className="text-sm">{format(expense_date, "MMM dd")}</span>
+    },
+    enableSorting: false
+  },
+  {
+    accessorKey: "title",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Title" />,
+    cell: ({ row }) => {
+      const { title } = row.original
+      return (
+        <Tooltip>
+          <TooltipTrigger>
+            <p className="w-24 truncate text-sm">{title}</p>
+          </TooltipTrigger>
+          <TooltipContent>
+            <span className="text-sm">{title}</span>
+          </TooltipContent>
+        </Tooltip>
+      )
+    },
+    enableSorting: false
+  },
+  {
+    accessorKey: "amount",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Amount" />,
+    cell: ({ row }) => {
+      const { amount } = row.original
+      return <span className="text-sm">{formatRupiah(amount)}</span>
+    },
+    enableSorting: false
+  }
 ]
