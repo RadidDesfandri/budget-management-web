@@ -107,9 +107,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return
       }
     }
-  }, [user, isLoading, pathname, hasOrganization, isPublicRoute, router, redirectTarget])
+  }, [
+    user,
+    isLoading,
+    pathname,
+    hasOrganization,
+    isPublicRoute,
+    router,
+    redirectTarget,
+    hasToken,
+    firstOrgId
+  ])
 
-  if (isLoading || shouldRedirect) {
+  const shouldBlockUi = (!isPublicRoute && isLoading) || shouldRedirect
+
+  if (shouldBlockUi) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <div className="flex flex-col items-center gap-2">
