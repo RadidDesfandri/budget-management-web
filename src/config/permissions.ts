@@ -9,12 +9,15 @@ export type Permission =
   | "budget:edit" // Edit budget
   | "budget:approve" // Approve request budget
   | "budget:view" // Lihat budget
+  | "budget:delete" // Hapus budget
   | "category:create" // Buat kategori baru
   | "category:edit" // Edit kategori
   | "category:delete" // Hapus kategori
   | "category:view" // Lihat kategori
   | "expense:approve" // Approve request expense
   | "expense:reject" // Reject request expense
+  | "expense:create" // Create expense
+  | "expense:delete" // Delete expense
 
 export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   owner: [
@@ -26,11 +29,13 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "budget:edit",
     "budget:approve",
     "budget:view",
+    "budget:delete",
     "category:create",
     "category:edit",
     "category:delete",
     "expense:approve",
-    "expense:reject"
+    "expense:reject",
+    "expense:create"
   ],
   admin: [
     "org:update",
@@ -39,22 +44,26 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "budget:edit",
     "budget:approve",
     "budget:view",
+    "budget:delete",
     "category:create",
     "category:edit",
     "category:delete",
     "expense:approve",
-    "expense:reject"
+    "expense:reject",
+    "expense:create"
   ],
   finance: [
     "budget:approve",
     "budget:view",
     "budget:create",
     "budget:edit",
+    "budget:delete",
     "category:create",
     "category:edit",
     "category:delete",
     "expense:approve",
-    "expense:reject"
+    "expense:reject",
+    "expense:create"
   ],
-  member: ["budget:create", "budget:view", "category:view"]
+  member: ["expense:create", "budget:view", "category:view"]
 }
