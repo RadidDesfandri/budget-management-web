@@ -73,7 +73,7 @@ function ExpenseForm({
     }
   })
 
-  const { data: categories } = useGetCategories(organizationId)
+  const { data: categories } = useGetCategories({ organizationId, page_size: 100 })
 
   useEffect(() => {
     if (!fieldErrors) return
@@ -176,7 +176,9 @@ function ExpenseForm({
                               )}
                             >
                               {field.value
-                                ? categories?.find((c) => String(c.id) === field.value)?.name
+                                ? categories?.categories.data?.find(
+                                    (c) => String(c.id) === field.value
+                                  )?.name
                                 : "Select category"}
                               <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
                             </Button>
@@ -188,7 +190,7 @@ function ExpenseForm({
                             <CommandList>
                               <CommandEmpty>No category found.</CommandEmpty>
                               <CommandGroup>
-                                {categories?.map((category) => (
+                                {categories?.categories.data?.map((category) => (
                                   <CommandItem
                                     key={category.id}
                                     value={category.name}

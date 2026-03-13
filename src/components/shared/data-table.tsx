@@ -24,6 +24,7 @@ import {
   TableHeader,
   TableRow
 } from "@/src/components/ui/table"
+import { Skeleton } from "@/src/components/ui/skeleton"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -274,11 +275,15 @@ export function DataTable<TData, TValue>({
           </TableHeader>
           <TableBody className="bg-white">
             {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  Loading...
-                </TableCell>
-              </TableRow>
+              Array.from({ length: 5 }).map((_, rowIndex) => (
+                <TableRow key={`skeleton-row-${rowIndex}`}>
+                  {columns.map((_, colIndex) => (
+                    <TableCell key={`skeleton-cell-${colIndex}`} className="px-5">
+                      <Skeleton className="h-5 w-full" />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
             ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
@@ -309,7 +314,7 @@ export function DataTable<TData, TValue>({
               {table.getFilteredRowModel().rows.length} row(s) selected.
             </span>
           )}
-          {totalItems && <span className="ml-2">Total: {totalItems} items</span>}
+          {totalItems && totalItems > 0 && <span className="ml-2">Total: {totalItems} items</span>}
         </div>
         <div className="flex items-center space-x-6 lg:space-x-8">
           <div className="flex w-25 items-center justify-center text-sm font-medium">
