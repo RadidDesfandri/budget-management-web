@@ -59,6 +59,7 @@ export interface DataTableProps<TData, TValue> {
   // Pagination handlers
   onPaginationChange?: OnChangeFn<PaginationState>
   pagination?: PaginationState
+  enablePagination?: boolean
 
   // Sorting handlers
   onSortingChange?: OnChangeFn<SortingState>
@@ -94,6 +95,7 @@ export interface DataTableProps<TData, TValue> {
 
   // Additional content
   additionalContent?: React.ReactNode
+  headerSize?: "default" | "sm" | "large"
 }
 
 export function DataTable<TData, TValue>({
@@ -108,6 +110,7 @@ export function DataTable<TData, TValue>({
   manualFiltering = false,
   onPaginationChange,
   pagination: controlledPagination,
+  enablePagination = true,
   onSortingChange,
   sorting: controlledSorting,
   onColumnFiltersChange,
@@ -124,7 +127,8 @@ export function DataTable<TData, TValue>({
   emptyState,
   pageSizeOptions = [10, 20, 30, 40, 50],
   enablePageSizeOptions = true,
-  additionalContent
+  additionalContent,
+  headerSize = "default"
 }: DataTableProps<TData, TValue>) {
   // Local state for client-side operations
   const [localSorting, setLocalSorting] = React.useState<SortingState>([])
@@ -178,10 +182,16 @@ export function DataTable<TData, TValue>({
     manualFiltering
   })
 
+  const headerMapingSize = {
+    default: "h-14",
+    sm: "h-10",
+    large: "h-16"
+  }
+
   return (
     <div className="space-y-4">
       {/* Toolbar */}
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         {enablePageSizeOptions && (
           <div className="flex items-center space-x-2">
             <p className="text-sm font-medium">Rows per page</p>
@@ -205,17 +215,17 @@ export function DataTable<TData, TValue>({
           </div>
         )}
 
-        <div className="flex flex-1 items-center gap-2">
-          {/* Search Input */}
-          {searchKey && (
+        {searchKey && (
+          <div className="flex flex-1 items-center gap-2">
+            {/* Search Input */}
             <Input
               placeholder={searchPlaceholder}
               value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
               onChange={(event) => table.getColumn(searchKey)?.setFilterValue(event.target.value)}
               className="max-w-sm bg-white"
             />
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Additional Content */}
         {additionalContent && <div className="ml-auto">{additionalContent}</div>}
@@ -258,7 +268,7 @@ export function DataTable<TData, TValue>({
           </div>
         )}
         <Table>
-          <TableHeader className={cn("h-14", title && "bg-white")}>
+          <TableHeader className={cn(headerMapingSize[headerSize], title && "bg-white")}>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -316,49 +326,51 @@ export function DataTable<TData, TValue>({
           )}
           {totalItems && totalItems > 0 && <span className="ml-2">Total: {totalItems} items</span>}
         </div>
-        <div className="flex items-center space-x-6 lg:space-x-8">
-          <div className="flex w-25 items-center justify-center text-sm font-medium">
-            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+        {enablePagination && (
+          <div className="flex items-center space-x-6 lg:space-x-8">
+            <div className="flex w-25 items-center justify-center text-sm font-medium">
+              Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                className="hidden h-8 w-8 p-0 lg:flex"
+                onClick={() => table.setPageIndex(0)}
+                disabled={!table.getCanPreviousPage()}
+              >
+                <span className="sr-only">Go to first page</span>
+                <ChevronsLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                className="h-8 w-8 p-0"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+              >
+                <span className="sr-only">Go to previous page</span>
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                className="h-8 w-8 p-0"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+              >
+                <span className="sr-only">Go to next page</span>
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                className="hidden h-8 w-8 p-0 lg:flex"
+                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+                disabled={!table.getCanNextPage()}
+              >
+                <span className="sr-only">Go to last page</span>
+                <ChevronsRight className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              className="hidden h-8 w-8 p-0 lg:flex"
-              onClick={() => table.setPageIndex(0)}
-              disabled={!table.getCanPreviousPage()}
-            >
-              <span className="sr-only">Go to first page</span>
-              <ChevronsLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              className="h-8 w-8 p-0"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              <span className="sr-only">Go to previous page</span>
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              className="h-8 w-8 p-0"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              <span className="sr-only">Go to next page</span>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              className="hidden h-8 w-8 p-0 lg:flex"
-              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-              disabled={!table.getCanNextPage()}
-            >
-              <span className="sr-only">Go to last page</span>
-              <ChevronsRight className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   )

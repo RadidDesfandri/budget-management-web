@@ -12,6 +12,7 @@ import AddBudget from "./components/add-budget"
 import { budgetColumns } from "./components/budget-columns"
 import BudgetLegend from "./components/budget-legend"
 import BudgetStats from "./components/budget-stats"
+import { PermissionGuard } from "@/src/components/shared/permission-guard"
 
 const BudgetPage = () => {
   const params = useParams()
@@ -57,8 +58,10 @@ const BudgetPage = () => {
               className="w-44"
             />
 
-            <hr className="h-7 w-px bg-neutral-300" />
-            <AddBudget />
+            <PermissionGuard action="budget:create">
+              <hr className="h-7 w-px bg-neutral-300" />
+              <AddBudget />
+            </PermissionGuard>
           </div>
         }
       />
