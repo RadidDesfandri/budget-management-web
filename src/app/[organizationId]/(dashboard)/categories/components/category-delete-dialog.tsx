@@ -13,6 +13,7 @@ import {
 } from "@/src/components/ui/dialog"
 import { useDeleteCategory } from "../category.api"
 import { Category } from "../category.type"
+import { useState } from "react"
 
 interface CategoryDeleteDialogProps {
   category: Category
@@ -21,9 +22,10 @@ interface CategoryDeleteDialogProps {
 
 export function CategoryDeleteDialog({ category, trigger }: CategoryDeleteDialogProps) {
   const { mutate: deleteCategory, isPending } = useDeleteCategory(String(category.organization_id))
+  const [isOpen, setIsOpen] = useState<boolean>(false)
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -42,7 +44,13 @@ export function CategoryDeleteDialog({ category, trigger }: CategoryDeleteDialog
           </DialogClose>
           <Button
             variant="destructive"
-            onClick={() => deleteCategory(category.id)}
+            onClick={() =>
+              deleteCategory(category.id, {
+                onSuccess: () => {
+                  setIsOpen(false)
+                }
+              })
+            }
             disabled={isPending}
           >
             {isPending ? "Deleting..." : "Delete"}

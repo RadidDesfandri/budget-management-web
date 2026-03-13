@@ -17,6 +17,7 @@ import { History, Info } from "lucide-react"
 import { IoClose } from "react-icons/io5"
 import { CategoryWithExpenses } from "../category.type"
 import CategoryIcon from "./category-icon"
+import { recentExpenseBudgets } from "../../budgets/components/budget-columns"
 
 interface CategoryDetailDrawerProps {
   category: CategoryWithExpenses
@@ -89,12 +90,12 @@ export function CategoryDetailDrawer({ category, trigger }: CategoryDetailDrawer
 
           <DataTable
             data={category.recent_expenses}
-            columns={[]}
-            // headerSize="sm"
+            columns={recentExpenseBudgets}
+            headerSize="sm"
             enableColumnVisibility={false}
             enablePageSizeOptions={false}
             enableRowSelection={false}
-            // enablePagination={false}
+            enablePagination={false}
           />
         </div>
 
