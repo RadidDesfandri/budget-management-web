@@ -3,7 +3,7 @@ import { ApiError, ApiResponse } from "@/src/types/api"
 import { QueryParams } from "@/src/types/global"
 import { ResponseMembers } from "@/src/types/member"
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { InviteMemberInput } from "./member.type"
+import { InviteMemberInput, UpdateMemberRoleInput } from "./member.type"
 import { normalizeApiError } from "@/src/lib/utils"
 import { toast } from "sonner"
 
@@ -73,4 +73,61 @@ const useInviteMember = (organizationId: string) => {
   })
 }
 
-export { useGetMemberInOrganization, useInviteMember }
+const useUpdateMemberRole = (organizationId: string, memberId: number) => {
+  const queryClient = useQueryClient()
+
+  return useMutation<ApiResponse<null>, ApiError, UpdateMemberRoleInput>({
+    mutationFn: async (payload: UpdateMemberRoleInput) => {
+      try {
+        const { data } = await axiosInstance.put(
+          `/v1/org/${organizationId}/member/${memberId}/change-role`,
+          payload
+        )
+
+        return data
+      } catch (error) {
+        throw normalizeApiError(error)
+      }
+    },
+    onSuccess: (data) => {
+      toast.success(data.message ?? "Member role updated successfully")
+      queryClient.invalidateQueries({
+        queryKey: ["members", Number(organizationId)]
+      })
+    },
+    onError: (error) => {
+      if (!error.fieldErrors) {
+        toast.error(error.message)
+      }
+    }
+  })
+}
+
+const useRemoveMember = (organizationId: string) => {
+  const queryClient = useQueryClient()
+
+  return useMutation<ApiResponse<null>, ApiError, number>({
+    mutationFn: async (memberId: number) => {
+      try {
+        const { data } = await axiosInstance.delete(`/v1/org/${organizationId}/member/${memberId}`)
+
+        return data
+      } catch (error) {
+        throw normalizeApiError(error)
+      }
+    },
+    onSuccess: (data) => {
+      toast.success(data.message ?? "Member removed successfully")
+      queryClient.invalidateQueries({
+        queryKey: ["members", Number(organizationId)]
+      })
+    },
+    onError: (error) => {
+      if (!error.fieldErrors) {
+        toast.error(error.message)
+      }
+    }
+  })
+}
+
+export { useGetMemberInOrganization, useInviteMember, useUpdateMemberRole, useRemoveMember }

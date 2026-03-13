@@ -1,14 +1,51 @@
 "use client"
 
 import { DataTableColumnHeader } from "@/src/components/shared/data-table-column-header"
+import { ActionItem, DataTableRowActions } from "@/src/components/shared/data-table-row-actions"
 import RoleBadge from "@/src/components/shared/role-badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar"
 import { Checkbox } from "@/src/components/ui/checkbox"
 import { useAuth } from "@/src/context/auth-context"
+import { usePermission } from "@/src/hooks/use-permission"
 import { getInitialUsername } from "@/src/lib/utils"
 import { MemberData, Role } from "@/src/types/member"
 import { User } from "@/src/types/user"
 import { ColumnDef } from "@tanstack/react-table"
+import { Edit, Eye, Trash } from "lucide-react"
+import DeleteMemberDialog from "./delete-member-dialog"
+import EditMemberDialog from "./edit-member-dialog"
+import MemberDetailDrawer from "./member-detail-drawer"
+import { format } from "date-fns"
+
+export const memberActions: ActionItem<MemberData>[] = [
+  {
+    label: "Detail",
+    icon: <Eye className="h-4 w-4" />,
+    render: (data, trigger) => <MemberDetailDrawer member={data} trigger={trigger} />
+  },
+  {
+    label: "Edit",
+    icon: <Edit className="h-4 w-4" />,
+    render: (data, trigger) => <EditMemberDialog member={data} trigger={trigger} />,
+    hidden(data) {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const { can } = usePermission()
+      return !can("member:invite") || data.role === "owner"
+    }
+  },
+  {
+    label: "Delete",
+    icon: <Trash className="h-4 w-4" />,
+    variant: "destructive",
+    separator: "before",
+    render: (data, trigger) => <DeleteMemberDialog member={data} trigger={trigger} />,
+    hidden(data) {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const { can } = usePermission()
+      return !can("member:remove") || data.role === "owner"
+    }
+  }
+]
 
 export const memberColumns: ColumnDef<MemberData>[] = [
   {
@@ -79,35 +116,16 @@ export const memberColumns: ColumnDef<MemberData>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Joined At" />,
     cell: ({ row }) => {
       return (
-        <div className="flex space-x-2">
-          <span className="max-w-125 truncate">
-            {new Date(row.getValue("joined_at")).toLocaleDateString()}
-          </span>
-        </div>
+        <span className="max-w-125 truncate">
+          {format(new Date(row.getValue("joined_at")), "MMM dd, yyyy")}
+        </span>
       )
     }
+  },
+  {
+    id: "actions",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Actions" />,
+    cell: ({ row }) => <DataTableRowActions row={row} actions={memberActions} />,
+    enableSorting: false
   }
-  // {
-  //   id: "actions",
-  //   header: ({ column }) => <DataTableColumnHeader column={column} title="Actions" />,
-  //   cell: ({ row }) => (
-  //     <DataTableRowActions
-  //       row={row}
-  //       onEdit={(data) => {
-  //         console.log("Edit:", data)
-  //         // Implementasi edit logic
-  //       }}
-  //       onDelete={(data) => {
-  //         console.log("Delete:", data)
-  //         // Implementasi delete logic
-  //       }}
-  //       onCopy={(data) => {
-  //         navigator.clipboard.writeText(data.id.toString())
-  //         // Toast notification
-  //       }}
-  //     />
-  //   ),
-  //   enableHiding: false,
-  //   enableSorting: false
-  // }
 ]

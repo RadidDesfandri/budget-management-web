@@ -40,6 +40,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   admin: [
     "org:update",
     "member:invite",
+    "member:remove",
     "budget:create",
     "budget:edit",
     "budget:approve",
