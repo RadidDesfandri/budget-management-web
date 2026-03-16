@@ -1,6 +1,7 @@
 import * as z from "zod"
-import { inviteMemberSchema } from "./member.schema"
+import { inviteMemberSchema, updateMemberRoleSchema } from "./member.schema"
 
 type InviteMemberInput = z.infer<typeof inviteMemberSchema>
+type UpdateMemberRoleInput = z.infer<typeof updateMemberRoleSchema>
 
-export type { InviteMemberInput }
+export type { InviteMemberInput, UpdateMemberRoleInput }
