@@ -83,7 +83,7 @@ export function ExpensesFilter({ filters, onFiltersChange }: ExpensesFilterProps
   const params = useParams()
   const organizationId = params.organizationId as string
 
-  const { data: categories } = useGetCategories(organizationId)
+  const { data: categories } = useGetCategories({ organizationId, page_size: 50 })
 
   const dateRange: DateRange | undefined =
     filters.date_from || filters.date_to
@@ -206,7 +206,7 @@ export function ExpensesFilter({ filters, onFiltersChange }: ExpensesFilterProps
       </motion.div>
 
       <AnimatePresence initial={false}>
-        {categories && categories.length > 0 && (
+        {categories && categories.categories.data.length > 0 && (
           <motion.div
             key="category-filter"
             variants={filterChipVariants}
@@ -227,7 +227,7 @@ export function ExpensesFilter({ filters, onFiltersChange }: ExpensesFilterProps
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
                 <Separator className="my-1" />
-                {categories?.map((category) => (
+                {categories.categories.data?.map((category) => (
                   <SelectItem key={category.id} value={category.name} className="capitalize">
                     {category.name}
                   </SelectItem>

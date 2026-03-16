@@ -6,4 +6,8 @@ const inviteMemberSchema = z.object({
   role: requiredStringSchema
 })
 
-export { inviteMemberSchema }
+const updateMemberRoleSchema = z.object({
+  role: requiredStringSchema
+})
+
+export { inviteMemberSchema, updateMemberRoleSchema }
