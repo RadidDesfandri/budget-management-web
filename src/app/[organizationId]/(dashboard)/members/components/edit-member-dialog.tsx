@@ -24,7 +24,7 @@ function EditMemberDialog({ member, trigger }: EditMemberDialogProps) {
   const params = useParams()
   const organizationId = params.organizationId as string
 
-  const { mutate, isPending, error } = useUpdateMemberRole(organizationId, member.id)
+  const { mutate, isPending, error } = useUpdateMemberRole(organizationId, member.user.id)
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
   const onSubmit = (values: UpdateMemberRoleInput) => {
