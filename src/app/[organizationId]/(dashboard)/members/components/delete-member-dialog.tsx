@@ -46,7 +46,7 @@ function DeleteMemberDialog({ member, trigger }: DeleteMemberDialogProps) {
             variant="destructive"
             disabled={isPending}
             onClick={() =>
-              removeMember(member.id, {
+              removeMember(member.user.id, {
                 onSuccess: () => setOpen(false)
               })
             }

@@ -68,7 +68,7 @@ function MemberDetailDrawer({ member, trigger }: MemberDetailDrawerProps) {
           <Separator />
 
           <div className="grid grid-cols-1 gap-5">
-            <DetailItem label="Member ID" value={`#${member.id}`} />
+            <DetailItem label="Member ID" value={`#${member.user.id}`} />
 
             <DetailItem label="Role" value={<RoleBadge role={member.role} />} />
 
