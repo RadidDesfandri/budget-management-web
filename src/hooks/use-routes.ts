@@ -4,14 +4,16 @@ import { FaUsers, FaWallet } from "react-icons/fa"
 import { IoIosPaper, IoMdMail } from "react-icons/io"
 import { MdCategory, MdDashboard, MdHistory } from "react-icons/md"
 import { RiUserSettingsFill } from "react-icons/ri"
+import { usePermission } from "./use-permission"
 
 const useRoutes = () => {
   const pathname = usePathname()
   const params = useParams()
   const organizationId = params.organizationId as string
+  const { role } = usePermission()
 
-  const dashboardRoutes = useMemo(
-    () => [
+  const dashboardRoutes = useMemo(() => {
+    const routes = [
       {
         path: `/${organizationId}/dashboard`,
         name: "Dashboard",
@@ -47,28 +49,27 @@ const useRoutes = () => {
         name: "Invitations",
         icon: IoMdMail,
         isActive: pathname.startsWith(`/${organizationId}/invitations`)
-      },
-      {
+      }
+    ]
+
+    if (["owner", "admin"].includes(role)) {
+      routes.push({
         path: `/${organizationId}/activity-logs`,
         name: "Activity Logs",
         icon: MdHistory,
         isActive: pathname.startsWith(`/${organizationId}/activity-logs`)
-      },
-      // {
-      //   path: `/${organizationId}/organization-settings`,
-      //   name: "Organization Settings",
-      //   icon: IoMdSettings,
-      //   isActive: pathname.startsWith(`/${organizationId}/organization-settings`)
-      // },
-      {
-        path: `/${organizationId}/user-settings`,
-        name: "User Settings",
-        icon: RiUserSettingsFill,
-        isActive: pathname.startsWith(`/${organizationId}/user-settings`)
-      }
-    ],
-    [pathname, organizationId]
-  )
+      })
+    }
+
+    routes.push({
+      path: `/${organizationId}/user-settings`,
+      name: "User Settings",
+      icon: RiUserSettingsFill,
+      isActive: pathname.startsWith(`/${organizationId}/user-settings`)
+    })
+
+    return routes
+  }, [pathname, organizationId, role])
 
   const landingRoutes = useMemo(
     () => [
