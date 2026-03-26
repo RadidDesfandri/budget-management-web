@@ -71,19 +71,8 @@ const useRoutes = () => {
     return routes
   }, [pathname, organizationId, role])
 
-  const landingRoutes = useMemo(
-    () => [
-      { path: "/features", name: "Features", isActive: pathname === "/features" },
-      { path: "/how-it-works", name: "How It Works", isActive: pathname === "/how-it-works" },
-      { path: "/pricing", name: "Pricing", isActive: pathname === "/pricing" },
-      { path: "/contact", name: "Contact", isActive: pathname === "/contact" }
-    ],
-    [pathname]
-  )
-
   return {
-    dashboardRoutes,
-    landingRoutes
+    dashboardRoutes
   }
 }
 
