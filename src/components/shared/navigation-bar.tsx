@@ -1,20 +1,29 @@
 "use client"
 
 import Logo from "@/src/components/shared/logo"
-import { useRoutes } from "@/src/hooks/use-routes"
 import { cn } from "@/src/lib/utils"
 import Link from "next/link"
-import { useState } from "react"
+import { usePathname } from "next/navigation"
+import { useMemo, useState } from "react"
 import { IoClose } from "react-icons/io5"
 import { RiSideBarFill } from "react-icons/ri"
 import { Button } from "../ui/button"
 
 function NavigationBar() {
-  const { landingRoutes } = useRoutes()
+  const pathname = usePathname()
+  const landingRoutes = useMemo(
+    () => [
+      { path: "/features", name: "Features", isActive: pathname === "/features" },
+      { path: "/how-it-works", name: "How It Works", isActive: pathname === "/how-it-works" },
+      { path: "/pricing", name: "Pricing", isActive: pathname === "/pricing" },
+      { path: "/contact", name: "Contact", isActive: pathname === "/contact" }
+    ],
+    [pathname]
+  )
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <nav className="fixed top-0 left-0 flex w-full flex-row-reverse items-center justify-between border-b bg-white p-3 px-5 md:flex-row md:px-10">
+    <nav className="fixed top-0 left-0 z-50 flex w-full flex-row-reverse items-center justify-between border-b bg-white p-3 px-5 md:flex-row md:px-10">
       <Link href="/">
         <Logo />
       </Link>
