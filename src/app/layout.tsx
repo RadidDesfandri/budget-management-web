@@ -16,8 +16,17 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Budget Management App",
-  description: "Budget Management App"
+  title: {
+    template: "%s | Budget Management App",
+    default: "Budget Management App"
+  },
+  description:
+    "A comprehensive solution for managing organization budgets, tracking expenses, and viewing audit trails.",
+  openGraph: {
+    title: "Budget Management App",
+    description: "Multi-tenant budget management platform.",
+    type: "website"
+  }
 }
 
 export default function RootLayout({
